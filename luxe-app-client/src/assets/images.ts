@@ -1,0 +1,1 @@
+export {default as heroModelImg} from "./images/heroModel.png";
