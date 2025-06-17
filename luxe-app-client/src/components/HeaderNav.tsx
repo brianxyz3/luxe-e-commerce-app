@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, User } from "lucide-react";
+import { Plus, Search, ShoppingCart, User } from "lucide-react";
 import { heroModelImg } from "@/assets/images";
 import { Link } from "react-router";
 import React, { useRef, useState } from "react";
@@ -97,9 +97,9 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
 
       {/* Mobile Navigation Menu */}
       
-        <section className={`grid grid-cols-1 h-dvh w-dvw md:hidden bg-white overflow-hidden z-20 fixed inset-0 duration-500 ease-in ${!showNavBar && "-left-full"}`}>
+      <section className={`grid grid-cols-1 h-dvh w-dvw md:hidden bg-white overflow-hidden z-20 fixed inset-0 duration-500 ease-in ${!showNavBar && "-left-full"}`}>
         <div className="w-4/5 mx-auto mt-[5rem] flex md:hidden">
-            <div className="relative flex w-full rounded-lg bg-gray-300">
+          <div className="relative flex w-full rounded-lg bg-gray-300">
             <Input
               placeholder="Search products..."
               value={searchQuery}
@@ -107,27 +107,30 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
               className="pl-10 rounded-lg"
             />
             <Search className="absolute top-2.5 left-3 w-5 h-5 text-gray-500" />
-            </div>
+          </div>
         </div>
-            <nav className="pb-2 ps-6">
-              <div className="text-[#957461] overflow-auto text-xl font-bold flex gap-5 px-2.5 ms-0.5 py-4">
-                {['Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
-                  <Link to="/" key={item} className="hover:text-amber-300 scale-y-125 text-nowrap transition-colors">{item}</Link>
-                ))}
-              </div>
-              <Link to="/products" className="underline">shop all products</Link>
-            </nav>
-            <div className="pb-6 px-6 overflow-auto">
-                {
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, idx) => (
-                  <Link to="/" key={idx} className="flex text-[#7f6251] items-center gap-3 py-2.5 border-b border-[#957461]">
-                  <img src={heroModelImg} alt="" className="w-16 aspect-square rounded-md" />
+        <nav className="pb-2 ps-6">
+          <div className="text-[#957461] overflow-auto text-xl font-bold flex gap-5 px-2.5 ms-0.5 py-4">
+            {['Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
+              <Link to="/" key={item} className="hover:text-amber-300 scale-y-125 text-nowrap transition-colors">{item}</Link>
+            ))}
+          </div>
+          <Link to="/products" className="underline">shop all products</Link>
+        </nav>
+        <div className="pb-6 px-6 overflow-auto">
+          {
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, idx) => (
+              <Link to="/" key={idx} className="flex text-[#7f6251] items-center gap-3 py-2.5 border-b border-[#957461]">
+                <img src={heroModelImg} alt="" className="w-16 aspect-square rounded-md" />
+                <div className="flex items-baseline gap-x-0.5">
                   <p>item- {item}</p>
-                  </Link>
-                ))
-                }
-            </div>
-        </section>
+                  <Plus className="size-3"/>
+                </div>
+              </Link>
+            ))
+          }
+        </div>
+      </section>
     </header>
   )
 }

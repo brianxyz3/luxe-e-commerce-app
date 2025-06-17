@@ -8,6 +8,10 @@ const allProducts = [
   { name: "Brown Foundation", price: "$30", image: "/products/foundation.jpg", category: "Makeup" },
   { name: "Silk Shampoo", price: "$28", image: "/products/shampoo.jpg", category: "Haircare" },
   { name: "Aloe Face Cream", price: "$36", image: "/products/facecream.jpg", category: "Skincare" },
+  { name: "Glow Foundation", price: "$42", image: "/products/foundation.jpg", category: "Makeup" },
+  { name: "Brown Foundation", price: "$30", image: "/products/foundation.jpg", category: "Makeup" },
+  { name: "Silk Shampoo", price: "$28", image: "/products/shampoo.jpg", category: "Haircare" },
+  { name: "Aloe Face Cream", price: "$36", image: "/products/facecream.jpg", category: "Skincare" },
   { name: "Essential Perfume", price: "$75", image: "/products/perfume2.jpg", category: "Fragrance" },
   // Add more products as needed
 ];

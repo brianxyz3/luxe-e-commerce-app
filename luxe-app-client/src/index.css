@@ -208,3 +208,15 @@ img {
 .hero_container_shadow {
   box-shadow: 0 0 20px 50px #957461b3;
 }
+
+div .product_description_container .details {
+  mask: linear-gradient(to bottom, white 20%, transparent);
+  display: grid;
+  grid-template-rows: .6fr;
+  transition: grid-template-rows 1s;
+}
+
+div .product_description_container .details:has(.open) {
+  mask: linear-gradient(to bottom, white 99%, transparent);
+  grid-template-rows: 1fr;
+}
