@@ -11,6 +11,14 @@ html, body {
   overflow-x: hidden;
 }
 
+body {
+  background-color: #f3e4d7;
+}
+
+.dark {
+  background-color: #000;
+}
+
 .disable_scroll {
   overflow-y: hidden;
 }
@@ -204,19 +212,49 @@ img {
   }
 }
 
+.bg_light {
+  background-color: #f3e4d7;
+}
+
+.bg_lighter {
+  background-color: #fdfaf7;
+}
+
+.text_light {
+  color: #f3e4d7;
+}
+
 
 .hero_container_shadow {
   box-shadow: 0 0 20px 50px #957461b3;
 }
 
+.dark .hero_container_shadow {
+  box-shadow: 0 0 20px 50px #00000099;
+} 
+
 div .product_description_container .details {
   mask: linear-gradient(to bottom, white 20%, transparent);
   display: grid;
   grid-template-rows: .6fr;
-  transition: grid-template-rows 1s;
+  transition: grid-template-rows .5s;
+}
+
+.dark div .product_description_container .details {
+  mask: linear-gradient(to bottom, black 20%, transparent);
 }
 
 div .product_description_container .details:has(.open) {
   mask: linear-gradient(to bottom, white 99%, transparent);
   grid-template-rows: 1fr;
+}
+
+.dark div .product_description_container .details:has(.open) {
+  mask: linear-gradient(to bottom, black 99%, transparent);
+}
+
+@media screen and (min-width: 768px ) {
+  .disable_scroll {
+    overflow-y: auto;
+  }
 }

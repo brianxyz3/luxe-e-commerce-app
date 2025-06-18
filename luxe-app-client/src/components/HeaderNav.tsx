@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Plus, Search, ShoppingCart, User } from "lucide-react";
 import { heroModelImg } from "@/assets/images";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import React, { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -56,20 +56,20 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
 
 
   return (
-    <header>
-      <section className="sticky z-50 top-0 bg-white shadow-sm p-4 flex items-center justify-between">
+    <header className="dark:bg-black">
+      <section className="fixed backdrop-blur-md bg-white/15 dark:bg-amber-900/15  w-full md:sticky z-50 top-0 shadow-sm p-4 flex items-center justify-between">
         <div ref={navBtn} className="md:hidden">
           <button title="navigation icon" type="button" className={`navBtn ease-linear overflow-hidden flex p-[3px] size-8 justify-center items-center md:hidden border border-transparent rounded-md hover:border-gray-700 `}
             onClick={toggleNavBar}>
             <div className={`w-full strokeBox flex flex-col gap-1`}>
-              <div className={`stroke1 w-6 h-1 bg-gray-700 rounded-lg ease-linear`}></div>
+              <div className={`stroke1 w-6 h-1 bg-gray-700 dark:bg-white rounded-lg ease-linear`}></div>
               <div className={`stroke2 w-6 h-1 bg-black rounded-lg ease-linear`}></div>
-              <div className={`stroke3 w-6 h-1 bg-gray-700 rounded-lg ease-linear`}></div>
+              <div className={`stroke3 w-6 h-1 bg-gray-700 dark:bg-white rounded-lg ease-linear`}></div>
             </div>
           </button>
         </div>
 
-        <Link to="/" className="text-2xl font-bold mx-auto md:m-0 text-amber-600">LUXÉ</Link>
+        <NavLink to="/" className="text-2xl font-bold mx-auto md:m-0 text-amber-600">LUXÉ</NavLink>
         
         {isHome && <div className="w-1/2 hidden md:flex">
           <div className="relative flex w-full">
@@ -83,21 +83,20 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
           </div>
         </div>}
         <div className="flex items-center gap-4">
-          <ShoppingCart className="w-6 h-6 text-gray-700" />
-          <User className="w-6 h-6 text-gray-700" />
+          <Link to="/shoppingCart"><ShoppingCart className="w-6 h-6 text-gray-700 dark:text-white" /></Link>
+          <User className="w-6 h-6 text-gray-700 dark:text-white" />
         </div>
       </section>
 
       {/* Navigation Menu */}
       <nav className="hidden bg-[#957461] md:px-6 py-2 text-sm font-medium text-gray-800 md:flex justify-center gap-5">
         {['Home', 'Shop All', 'Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
-          <Link to="/" key={item} className="hover:text-amber-300 text-nowrap transition-colors">{item}</Link>
+          <NavLink to="/" key={item} className="hover:text-amber-300 text-nowrap transition-colors">{item}</NavLink>
         ))}
       </nav>
 
-      {/* Mobile Navigation Menu */}
-      
-      <section className={`grid grid-cols-1 h-dvh w-dvw md:hidden bg-white overflow-hidden z-20 fixed inset-0 duration-500 ease-in ${!showNavBar && "-left-full"}`}>
+      {/* Mobile Navigation Menu */} 
+      <section className={`grid grid-cols-1 h-dvh w-dvw md:hidden bg-white dark:bg-black overflow-hidden z-20 fixed inset-0 duration-500 ease-in ${!showNavBar && "-left-full"}`}>
         <div className="w-4/5 mx-auto mt-[5rem] flex md:hidden">
           <div className="relative flex w-full rounded-lg bg-gray-300">
             <Input
