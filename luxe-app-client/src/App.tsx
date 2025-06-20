@@ -3,6 +3,8 @@ import HomePage from "./pages/HomePage"
 import ProductsPage from "./pages/ProductsPage"
 import MainLayout from "./layouts/MainLayout"
 import ProductDetailsPage from "./pages/ProductDetailsPage"
+import ShoppingCartPage from "./pages/ShoppingCartPage"
+import AuthPage from "./pages/AuthPage"
 
 function App() {
   return (
@@ -12,8 +14,10 @@ function App() {
             <Route path="/" element={<HomePage/>}/>
 
             <Route element={<MainLayout/>}>
-              <Route path="/products" element={<ProductDetailsPage/>}/>
-              {/* <Route path="/products" element={<ProductsPage/>}/> */}
+              <Route path="/products" element={<ProductsPage/>}/>
+              <Route path="/products/:productId" element={<ProductDetailsPage/>}/>
+              <Route path="/shoppingCart" element={<ShoppingCartPage/>}/>
+              <Route path="/auth" element={<AuthPage/>}/>
             </Route>
           </Routes>
         </BrowserRouter>

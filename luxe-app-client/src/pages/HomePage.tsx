@@ -7,6 +7,7 @@ import { heroModelImg } from "@/assets/images";
 import { Link } from "react-router";
 import Footer from "@/components/Footer";
 import HeaderNav from "@/components/HeaderNav";
+import ProductsSlider from "@/components/ProductsSlider";
 
 const HomePage = () => {  
   return (
@@ -17,8 +18,8 @@ const HomePage = () => {
       {/* Hero Section */}
       <main className="mt-16 md:mt-0">
         <section className="hero text-black dark:text-white relative overflow-hidden w-dvw h-[60dvh] lg:h-[75dvh] ">
-          <div className="relative flex bg-gradient-to-b from-[#957461] dark:from-[#231b16] to-40% to-transparent w-full h-full">
-            <div className="hero_container_shadow z-10 w-2/3 h-full md:bg-[#f3e4d7] md:dark:bg-black md:w-[65%]">
+          <div className="relative flex bg-gradient-to-b from-cream-darker dark:from-[#231b16] to-40% to-transparent w-full h-full">
+            <div className="hero_container_shadow z-10 w-2/3 h-full md:bg-cream-light md:dark:bg-black md:w-[65%]">
               <div className="flex flex-col gap-y-8 justify-center items-center h-full px-10 lg:gap-y-10">
                 <div className="">
                   <h1 className="text-2xl md:text-4xl lg:text-5xl mb-6 tracking-wider font-bold lg:mb-8">Unleash Your <br/> Inner Radiance</h1>
@@ -52,19 +53,7 @@ const HomePage = () => {
 
         {/* Featured Products */}
         <section className="py-12 bg-white dark:text-white dark:bg-stone-700">
-          <h2 className="text-2xl font-semibold mb-6 px-3 md:px-6 py-1 dark:bg-black">Best Sellers</h2>
-          <div className="flex flex-nowrap gap-6 overflow-auto px-2 md:px-6 pb-6">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-              <Card key={item} className="rounded-2xl shadow hover:shadow-md min-w-[150px] md:min-w-52 w-2/5 max-w-[275px]">
-                <img src={`/product${item}.jpg`} alt="Product" className="rounded-t-2xl" />
-                <CardContent className="p-4 text-center">
-                  <h3 className="font-semibold">Luxury Serum</h3>
-                  <p className="text-amber-600 font-bold">$49</p>
-                  <Button className="mt-2 bg-amber-500 hover:bg-amber-600 text-white w-full">Add to Cart</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductsSlider heading="Best Sellers" productsArr={[1, 2, 3, 4, 5, 6,7,8]} />
         </section>
 
         {/* All Products */}
@@ -114,7 +103,7 @@ const HomePage = () => {
           <h2 className="text-xl font-semibold mb-2">Get 10% Off Your First Order</h2>
           <p className="mb-4">Sign up for our newsletter to receive exclusive offers and updates.</p>
           <div className="flex justify-center">
-            <Input placeholder="Enter your email" className="max-w-md rounded-l-full" />
+            <Input placeholder="Enter your email" className="max-w-md rounded-l-full dark:border-white" />
             <Button className="rounded-r-full bg-amber-500 hover:bg-amber-600 text-white">Subscribe</Button>
           </div>
         </section>

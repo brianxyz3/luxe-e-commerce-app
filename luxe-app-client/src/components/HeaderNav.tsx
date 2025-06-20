@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Plus, Search, ShoppingCart, User } from "lucide-react";
+import { MoonStar, Plus, Search, ShoppingCart, Sun, User } from "lucide-react";
 import { heroModelImg } from "@/assets/images";
 import { Link, NavLink } from "react-router";
 import React, { useRef, useState } from "react";
@@ -11,6 +11,7 @@ gsap.registerPlugin(useGSAP);
 const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
 
     const [showNavBar, setShowNavBar] = useState(false);
+    const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
   const navBtn = useRef(null);
 
@@ -69,7 +70,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
           </button>
         </div>
 
-        <NavLink to="/" className="text-2xl font-bold mx-auto md:m-0 text-amber-600">LUXÉ</NavLink>
+        <NavLink to="/" className="text-2xl text-right sm:text-left w-1/3 sm:w-fit font-bold mx-auto md:m-0 text-amber-600">LUXÉ</NavLink>
         
         {isHome && <div className="w-1/2 hidden md:flex">
           <div className="relative flex w-full">
@@ -82,44 +83,53 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
             <Search className="absolute top-2.5 left-3 w-5 h-5 text-gray-500" />
           </div>
         </div>}
-        <div className="flex items-center gap-4">
-          <Link to="/shoppingCart"><ShoppingCart className="w-6 h-6 text-gray-700 dark:text-white" /></Link>
-          <User className="w-6 h-6 text-gray-700 dark:text-white" />
+        <div className="flex items-center  text-gray-700 dark:text-white gap-4">
+          <button
+            onClick={() => {
+              document.body.classList.toggle("dark");
+              setIsDarkTheme((currValue) => !currValue)
+            }}
+            title="light/dark theme" type="button" className="relative">
+            <MoonStar className={`${!isDarkTheme && "opacity-0"} w-6 h-6 duration-300 fixed`}/>
+            <Sun className={`${isDarkTheme && "opacity-0"} w-6 h-6 duration-300`}/>
+          </button>
+          <Link to="/shoppingCart"><ShoppingCart className="w-6 h-6" /></Link>
+          <Link to="/auth"><User className="w-6 h-6" /></Link>
         </div>
       </section>
 
       {/* Navigation Menu */}
-      <nav className="hidden bg-[#957461] md:px-6 py-2 text-sm font-medium text-gray-800 md:flex justify-center gap-5">
+      <nav className="hidden bg-cream-darker md:px-6 py-2 text-sm font-medium text-gray-800 md:flex justify-center gap-5">
         {['Home', 'Shop All', 'Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
           <NavLink to="/" key={item} className="hover:text-amber-300 text-nowrap transition-colors">{item}</NavLink>
         ))}
       </nav>
 
       {/* Mobile Navigation Menu */} 
-      <section className={`grid grid-cols-1 h-dvh w-dvw md:hidden bg-white dark:bg-black overflow-hidden z-20 fixed inset-0 duration-500 ease-in ${!showNavBar && "-left-full"}`}>
+      <section className={`grid grid-cols-1 h-dvh w-dvw md:hidden bg-white dark:bg-stone-600 overflow-hidden z-20 fixed inset-0 duration-500 ease-in ${!showNavBar && "-left-full"}`}>
         <div className="w-4/5 mx-auto mt-[5rem] flex md:hidden">
           <div className="relative flex w-full rounded-lg bg-gray-300">
             <Input
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 rounded-lg"
+              className="pl-10 rounded-lg dark:text-black"
             />
-            <Search className="absolute top-2.5 left-3 w-5 h-5 text-gray-500" />
+            <Search className="absolute top-2.5 left-3 w-5 h-5 text-gray-500 dark:text-cream-darker" />
           </div>
         </div>
-        <nav className="pb-2 ps-6">
-          <div className="text-[#957461] overflow-auto text-xl font-bold flex gap-5 px-2.5 ms-0.5 py-4">
+        <nav className="pb-2 ps-6 dark:bg-stone-600">
+          <div className="text-cream-darker dark:text-cream-light overflow-auto text-xl font-bold flex gap-5 px-2.5 ms-0.5 py-4">
             {['Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
               <Link to="/" key={item} className="hover:text-amber-300 scale-y-125 text-nowrap transition-colors">{item}</Link>
             ))}
           </div>
           <Link to="/products" className="underline">shop all products</Link>
         </nav>
-        <div className="pb-6 px-6 overflow-auto">
+        <div className="pb-6 px-6 overflow-auto dark:bg-gradient-to-b from-stone-700 to-15% to-black">
           {
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, idx) => (
-              <Link to="/" key={idx} className="flex text-[#7f6251] items-center gap-3 py-2.5 border-b border-[#957461]">
+              <Link to="/" key={idx} className="flex text-[#7f6251] items-center gap-3 py-2.5 border-b border-cream-dbg-cream-darker">
                 <img src={heroModelImg} alt="" className="w-16 aspect-square rounded-md" />
                 <div className="flex items-baseline gap-x-0.5">
                   <p>item- {item}</p>

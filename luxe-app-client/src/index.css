@@ -23,10 +23,6 @@ body {
   overflow-y: hidden;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
-
 img {
   display: block;
 }
@@ -101,6 +97,9 @@ img {
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-cream-light: #f3e4d7;
+  --color-cream-lighter: #fdfaf7;
+  --color-cream-darker: #957461;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -212,18 +211,6 @@ img {
   }
 }
 
-.bg_light {
-  background-color: #f3e4d7;
-}
-
-.bg_lighter {
-  background-color: #fdfaf7;
-}
-
-.text_light {
-  color: #f3e4d7;
-}
-
 
 .hero_container_shadow {
   box-shadow: 0 0 20px 50px #957461b3;
@@ -240,6 +227,16 @@ div .product_description_container .details {
   transition: grid-template-rows .5s;
 }
 
+aside .order_options_container {
+  display: grid;
+  grid-template-rows: .1fr;
+  transition: grid-template-rows .5s;
+}
+
+aside .order_options_container:has(.open) {
+  grid-template-rows: 1fr;
+}
+
 .dark div .product_description_container .details {
   mask: linear-gradient(to bottom, black 20%, transparent);
 }
@@ -251,6 +248,61 @@ div .product_description_container .details:has(.open) {
 
 .dark div .product_description_container .details:has(.open) {
   mask: linear-gradient(to bottom, black 99%, transparent);
+}
+
+form label {
+  display: inline-block;
+  color: #363638;
+  font-weight: 700;
+  padding-bottom: 8px;
+  margin: 0;
+}
+
+.form_container {
+  box-shadow: 10px 10px 20px #c6b19e,
+              -10px -10px 20px #fdf6ef;
+}
+
+.form_container .input,
+.form_container .btn {
+  color: rgb(52, 51, 51);
+  height: 30px;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  box-shadow: 10px 10px 20px #c6b19e,
+              -10px -10px 20px #fdf6ef;
+  transition: all 300ms ease;
+}
+
+.form_container .input:focus,
+.form_container .btn:active {
+  box-shadow: inset 5px 5px 10px #c6b19e,
+              inset -5px -5px 10px #fdf6ef;
+}
+
+.dark form label {
+  color: #b1b1b5;
+}
+
+.dark .form_container {
+  box-shadow: 10px 10px 20px #222,
+              -10px -10px 20px #535050;
+}
+
+.dark .form_container .input,
+.dark .form_container .btn {
+  color: rgb(20, 20, 20);
+  box-shadow: 10px 10px 20px #222,
+              -10px -10px 20px #535050;
+  transition: all 300ms ease;
+}
+
+.dark .form_container .input:focus,
+.dark .form_container .btn:active {
+  box-shadow: inset 5px 5px 10px #222,
+              inset -5px -5px 10px #535050;
 }
 
 @media screen and (min-width: 768px ) {

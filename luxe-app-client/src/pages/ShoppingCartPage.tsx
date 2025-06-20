@@ -17,10 +17,10 @@ const ShoppingCartPage = () => {
 
   const cartTotal = 5
   return (
-    <div className="relative py-6 bg-[#fdfaf7] dark:bg-stone-700">
+    <div className="relative py-6 bg-cream-light dark:bg-stone-700">
       <section className="flex flex-wrap-reverse md:flex-nowrap">
         <main className="w-full md:w-3/5 lg:w-2/3 px-3 lg:px-6">
-          <div className="bg-[#f3e4d7] dark:bg-black p-4">
+          <div className="bg-cream-light dark:bg-black p-4">
             <h3 className="font-bold text-2xl">Shopping Cart({cartTotal})</h3>
           </div>
 
@@ -34,7 +34,7 @@ const ShoppingCartPage = () => {
             <div className="flex flex-col gap-y-3 mt-8 lg:mt-0 min-h-[50dvh]">
               {
                 [1, 2, 3, 4].map(item => (
-                  <Card key={item} className="rounded-none overflow-hidden shadow bg-[#f3e4d7] dark:bg-black py-3">
+                  <Card key={item} className="rounded-none overflow-hidden shadow bg-cream-light dark:bg-black py-3">
                     <CardContent className="p-0">
                       <div className="flex items-center mb-4 px-3 lg:pe-0">
                         {/* <div className="w-14">
@@ -81,8 +81,8 @@ const ShoppingCartPage = () => {
         {/* Shopping Cart Summary */}
         <aside className="w-1/2 min-w-80 lg:min-w-72 mx-auto md:sticky top-10 md:h-fit lg:w-1/4 mb-10 sm:mb-6 md:mb-0 md:mr-6">
           <div className=" flex flex-col gap-1 mb-1">
-            <h2 className="text-xl font-semibold bg-[#f3e4d7] dark:bg-black p-4">CART SUMMARY <span className="inline-block ml-2">({cartTotal}) items</span></h2>
-            <div className="bg-[#f3e4d7] dark:bg-black text-gray-800 p-4 dark:text-gray-300">
+            <h2 className="text-xl font-semibold bg-cream-light dark:bg-black p-4">CART SUMMARY <span className="inline-block ml-2">({cartTotal}) items</span></h2>
+            <div className="bg-cream-light dark:bg-black text-gray-800 p-4 dark:text-gray-300">
               <div className="flex justify-between items-center w-11/12 mb-8">
                 <h6 className="text-lg">Order Charges</h6>
                 <p># 1,100</p>
@@ -93,7 +93,7 @@ const ShoppingCartPage = () => {
                 <p># 25,600</p>
               </div>
             </div>
-            <div className="bg-[#f3e4d7] dark:bg-black p-4">
+            <div className="bg-cream-light dark:bg-black p-4">
               <div className="w-11/12 text-lg font-semibold flex justify-between items-baseline">
                 <h5 className="tracking-wider">
                   TOTAL
@@ -105,7 +105,7 @@ const ShoppingCartPage = () => {
 
           {/* Order Options */}
           <div className="order_options_container">
-            <form className={`${showOrderOptions && "open"} bg-[#f3e4d7] dark:bg-black mt-6 overflow-hidden`}>
+            <form className={`${showOrderOptions && "open"} bg-cream-light dark:bg-black mt-6 overflow-hidden`}>
               <fieldset className="px-4 my-4">
                 <legend className="text-2xl font-bold">Order Confirmation</legend>
                 <div className="flex flex-col gap-2.5">
@@ -141,7 +141,7 @@ const ShoppingCartPage = () => {
       {/* Suggested Products */}
       <section className="py-4 px-4 mt-8 bg-white dark:bg-stone-700 w-full">
         <h5 className="text-xl font-semibold mb-6">Suggested Products</h5>
-        <div className="flex flex-nowrap gap-6 overflow-scroll">
+        <div className="flex flex-nowrap pb-4 gap-6 overflow-scroll">
           {[1, 2, 3, 4, 5, 6,7,8].map((item) => (
             <Card key={item} className="rounded-2xl shadow hover:shadow-md min-w-[150px] md:min-w-52 w-2/5 max-w-[275px]">
               <img src={`/product${item}.jpg`} alt="Product" className="rounded-t-2xl" />
