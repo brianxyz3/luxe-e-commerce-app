@@ -5,14 +5,15 @@ import { Link, NavLink } from "react-router";
 import React, { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useTheme } from "@/context/themeContext";
 
 gsap.registerPlugin(useGSAP);
 
 const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
 
-    const [showNavBar, setShowNavBar] = useState(false);
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+  const [showNavBar, setShowNavBar] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const {theme, toggleTheme} = useTheme();
   const navBtn = useRef(null);
 
   const navBtnTL = gsap.timeline({
@@ -86,12 +87,12 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
         <div className="flex items-center  text-gray-700 dark:text-white gap-4">
           <button
             onClick={() => {
-              document.body.classList.toggle("dark");
-              setIsDarkTheme((currValue) => !currValue)
+              if(theme == "light") return toggleTheme("dark");
+              toggleTheme("light");
             }}
-            title="light/dark theme" type="button" className="relative">
-            <MoonStar className={`${!isDarkTheme && "opacity-0"} w-6 h-6 duration-300 fixed`}/>
-            <Sun className={`${isDarkTheme && "opacity-0"} w-6 h-6 duration-300`}/>
+            title="toggle theme" type="button" className="relative">
+            <MoonStar className={`${theme != "dark" && "opacity-0"} w-6 h-6 duration-300 fixed`}/>
+            <Sun className={`${theme == "dark" && "opacity-0"} w-6 h-6 duration-300`}/>
           </button>
           <Link to="/shoppingCart"><ShoppingCart className="w-6 h-6" /></Link>
           <Link to="/auth"><User className="w-6 h-6" /></Link>
