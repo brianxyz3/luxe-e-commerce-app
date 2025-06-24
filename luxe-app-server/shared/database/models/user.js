@@ -28,12 +28,8 @@ const UserSchema = new Schema({
       type: String,
     },
     productImg: String,
-    price: {
-      type: Number,
-    },
-    units: {
-      type: Number,
-    },
+    price: Number,
+    units: Number,
   }],
   order: [
     {
