@@ -1,16 +1,50 @@
-import { heroModelImg, productImg1, productImg2, productImg3, productImg4, productImg5 } from "@/assets/images"
+import { heroModelImg, productImg1, productImg2, productImg3, productImg4 } from "@/assets/images"
 import PlusMinusButton from "@/components/PlusMinusButton"
 import ProductsSlider from "@/components/ProductsSlider"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/context/cartContext"
+import type { ProductType } from "@/controller/useProductFetch"
+import useProductFetch from "@/controller/useProductFetch"
+// import useProductFetch, { type ProductType } from "@/controller/useProductFetch"
+import axios from "axios"
 import { Star } from "lucide-react"
-import { useState } from "react"
-import { NavLink } from "react-router"
+import { useEffect, useState } from "react"
+import { NavLink, useParams } from "react-router"
+import { toast } from "react-toastify"
+
+
 
 const ProductDetailsPage = () => {
-
+    const {productId} = useParams()
+    const {updateCart, cart} = useCart();
     const [showMore, setShowMore] = useState(false);
-    const [quantity, setQuantity] = useState(1);
+    const [product, setProduct] = useState<ProductType>({_id: "",
+        name: "",
+        brandName: "",
+        description: "",
+        category: "",
+        type: "",
+        price: 0,});
 
+    useEffect (() => {
+        axios.get(`http://localhost:7000/products/${productId}`).then(response => {
+            setProduct(response.data)
+        })
+    }, [productId]);
+
+
+    const [quantity, setQuantity] = useState<number>(() => {
+        const productInCart = cart.filter(item => item.productId === productId)
+        console.log(productInCart)
+        if(productInCart.length > 0) return productInCart[0].units;
+        return 1;
+    });
+    
+
+    const {productList} = useProductFetch(1, product.category);
+
+    const isUnitDifferent = cart.some((item) => item.productId === productId && item.units !== quantity)
+    
     const increaseQantity = () => setQuantity(prevVal => prevVal + 1)
     const decreaseQantity = () => setQuantity(prevVal => prevVal - 1)
 
@@ -39,23 +73,23 @@ const ProductDetailsPage = () => {
 
             {/* Product Title and Description */}
             <div className="md:col-span-6 lg:col-span-4 lg:pl-2 xl:pr-4">
-                <h3 className="text-3xl tracking-wider font-bold mb-3">Product Name</h3>
-                <p className="text-xl font-bold mb-3"># 2000</p>
+                <h3 className="text-3xl tracking-wider font-bold mb-3">{product.name}</h3>
+                <p className="text-xl font-bold mb-3">$ {product.price}</p>
                 <h4 className="text-lg font-bold border-b border-red-600 w-fit mb-2 pb-1">About Item</h4>
                 <div className="flex gap-x-6 mb-1 flex-wrap md:flex-nowrap">
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">Brand:</p>
-                        <p>Brand Name</p>
+                        <p>{product.brandName}</p>
                     </div>
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">Type:</p>
-                        <p>Type</p>
+                        <p>{product.type}</p>
                     </div>
                 </div>
                 <div className="flex gap-x-6 mb-3 flex-wrap md:flex-nowrap">
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">Category:</p>
-                        <p>Category Name</p>
+                        <p>{product.category}</p>
                     </div>
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">weight:</p>
@@ -79,7 +113,7 @@ const ProductDetailsPage = () => {
                     </button>
                     <div className="details">
                         <div className={`${showMore && "open"} overflow-hidden leading-5`}>
-                            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid reiciendis sit labore fugiat? Nisi recusandae corrupti molestias laudantium voluptatum suscipit quas impedit tenetur eum voluptate temporibus quisquam maiores odit sunt obcaecati, aspernatur consequatur at nobis itaque assumenda? Soluta possimus deserunt, deleniti consequatur libero eveniet cupiditate quisquam. Cum id iste unde!
+                            {product.description}
                         </div>
                     </div>
                 </div>
@@ -104,12 +138,23 @@ const ProductDetailsPage = () => {
                     </div>
                     <div className="flex justify-between">
                         <p>Total: </p>
-                        <p className="font-black"># {2000 * quantity}</p>
+                        <p className="font-black">$ {Math.floor(product.price * quantity)}</p>
                     </div>
                 </div>
                 <div className="flex flex-col gap-y-4">
                     <Button className="rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white">Buy Now</Button>
-                    <Button className="rounded-sm text-lg border-2 border-black h-12 bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white">Add To Cart</Button>
+                    <Button 
+                    className="rounded-sm text-lg border-2 border-black h-12 font-bold bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white"
+                    onClick={() => {updateCart({productId: product._id,
+                        productBrand: product.brandName,
+                        productName: product.name,
+                        price: product.price,
+                        units: quantity
+                    })
+                    toast.success("Added To Cart")
+                }
+                }
+                    >{isUnitDifferent ? "Update" : "Add To"} Cart</Button>
                 </div>
             </div>
         </section>
@@ -172,7 +217,7 @@ const ProductDetailsPage = () => {
 
         {/* Products in this Category */}
         <section className="py-4 px-4 mt-8 bg-white dark:bg-stone-700">
-            <ProductsSlider heading="Products in this Category" productsArr={[1, 2, 3, 4, 5, 6,7,8]}/>
+            <ProductsSlider heading="Products in this Category" productsArr={productList}/>
         </section>
     </main>
   )

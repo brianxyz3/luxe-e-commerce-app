@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import useProductFetch from "@/controller/useProductFetch";
+import { Link } from "react-router";
+import ProductCard from "@/components/ProductCard";
 
 const allProducts = [
   { name: "Glow Foundation", price: "$42", image: "/products/foundation.jpg", type: "Serum" },
@@ -18,16 +21,20 @@ const allProducts = [
 
 
 const ProductsPage = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedType, setSelectedType] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("All");
+  const [pageNumber, setPageNumber] = useState(1);
 
-    const types = ["All", "Serum", "Cream", "Perfume", "Body Mist", "Scrub", "Wash", "Soap"];
+  const {productList, hasMore} = useProductFetch(pageNumber);
 
-    const filteredProducts = allProducts.filter((product) => {
-      const matchType = selectedType === "All" || product.type === selectedType;
-      const matchSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchType && matchSearch;
-    });
+  const types = ["All", "Serum", "Cream", "Perfume", "Body Mist", "Scrub", "Wash", "Soap"];
+
+  const filteredProducts = productList.filter((product) => {
+    const normalizedSelectedType = selectedType.toLocaleLowerCase();
+    const matchType = normalizedSelectedType === "all" || product.type === normalizedSelectedType;
+    const matchSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchType && matchSearch;
+  });
 
 
   return (
@@ -62,21 +69,25 @@ const ProductsPage = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-          {filteredProducts.map((product, index) => (
-            <Card key={index} className="rounded-xl overflow-hidden shadow">
-              <CardContent className="p-0">
-                <img src={product.image} alt={product.name} className="w-full h-32 object-cover" />
-                <div className="p-4">
-                  <h3 className="text-lg font-medium mb-1">{product.name}</h3>
-                  <p className="text-amber-600 font-semibold">{product.price}</p>
-                  <Button variant="ghost" className="mt-2 w-full text-sm border border-amber-400">
-                    Quick Add
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-3 sm:gap-6">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product._id} product={product} variant="ghost"/>
           ))}
+        </div>
+        <div className="flex mx-auto w-fit items-center gap-4 my-4">
+          <Button
+          disabled={pageNumber <= 1}
+          onClick={() => {
+            setPageNumber(prevNum => prevNum - 1)
+          }}
+          className="font-bold text-black dark:text-white dark:bg-cream-darker bg-cream-light">Prev</Button>
+          <p className="text-xl font-black">{pageNumber}</p>
+          <Button
+          disabled={!hasMore}
+          onClick={() => {
+            setPageNumber(prevNum => prevNum + 1)
+          }}
+          className="font-bold text-black dark:text-white dark:bg-cream-darker bg-cream-light">Next</Button>
         </div>
       </main>
     </div>

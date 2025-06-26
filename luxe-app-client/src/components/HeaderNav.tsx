@@ -1,11 +1,13 @@
 import { Input } from "@/components/ui/input";
-import { MoonStar, Plus, Search, ShoppingCart, Sun, User } from "lucide-react";
+import { Boxes, MoonStar, Plus, Search, ShoppingCart, Sun, User, UserCheck } from "lucide-react";
 import { heroModelImg } from "@/assets/images";
 import { Link, NavLink } from "react-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTheme } from "@/context/themeContext";
+import { useAuth } from "@/context/authContext";
+import { useCart } from "@/context/cartContext";
 
 gsap.registerPlugin(useGSAP);
 
@@ -15,6 +17,8 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const {theme, toggleTheme} = useTheme();
   const navBtn = useRef(null);
+  const {userLoggedIn} = useAuth();
+  const {cart, isEmpty} = useCart();
 
   const navBtnTL = gsap.timeline({
     defaults: {
@@ -52,10 +56,11 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
       .add([
         gsap.to(".navBtn", {rotate: "0deg"}),
       ])
+      // navBtnTL.timeScale(1)
+      // navBtnTL.reverse()
     }
     setShowNavBar(prevState => !prevState)
   });
-
 
   return (
     <header className="dark:bg-black">
@@ -71,7 +76,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
           </button>
         </div>
 
-        <NavLink to="/" className="text-2xl text-right sm:text-left w-1/3 sm:w-fit font-bold mx-auto md:m-0 text-amber-600">LUXÉ</NavLink>
+        <NavLink to="/" className="text-3xl text-right sm:text-left w-1/3 sm:w-fit font-bold mx-auto md:m-0 text-amber-600">LUXÉ</NavLink>
         
         {isHome && <div className="w-1/2 hidden md:flex">
           <div className="relative flex w-full">
@@ -91,11 +96,16 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
               toggleTheme("light");
             }}
             title="toggle theme" type="button" className="relative">
-            <MoonStar className={`${theme != "dark" && "opacity-0"} w-6 h-6 duration-300 fixed`}/>
-            <Sun className={`${theme == "dark" && "opacity-0"} w-6 h-6 duration-300`}/>
+            <MoonStar className={`${theme != "dark" && "opacity-0"} size-7 aspect-square duration-300 fixed`}/>
+            <Sun className={`${theme == "dark" && "opacity-0"} size-7 aspect-square duration-300`}/>
           </button>
-          <Link to="/shoppingCart"><ShoppingCart className="w-6 h-6" /></Link>
-          <Link to="/auth"><User className="w-6 h-6" /></Link>
+          <Link to="/shoppingCart"
+          className="relative">
+              {cart.length > 0 && <div className="w-4 aspect-square absolute -top-3 -z-10 right-1 rounded-full font-bold text-sm flex items-center justify-center"><Boxes className="fill-amber-500 dark:stroke-amber-600 dark:fill-transparent"/></div>}
+            <ShoppingCart className="size-7 aspect-square" />
+          </Link>
+          <Link className={`${userLoggedIn && "hidden"}`} to="/auth"><User className="size-7 aspect-square" /></Link>
+          <Link className={`${!userLoggedIn && "hidden"}`} to="/dashboard"><UserCheck className="size-7 aspect-square" /></Link>
         </div>
       </section>
 

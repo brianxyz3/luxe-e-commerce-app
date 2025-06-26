@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import { logInWithEmailAndPassword, signUpWithEmailAndPassword } from "@/controller/auth";
+import { useAuth } from "@/context/authContext";
+import { useNavigate } from "react-router";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ email: "", password: "", firstName: "", lastName: "" });
   const [error, setError] = useState("");
+  const {handleLogInState, userLoggedIn} = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(userLoggedIn) navigate("/products")
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,17 +25,19 @@ export default function AuthPage() {
     setError("");
 
     try {
-      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const { data } = await axios.post(endpoint, formData);
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        alert("Authentication successful");
+      if (isLogin) {
+        const data = await logInWithEmailAndPassword(formData);
+        data.token && handleLogInState(true);
+      } else {
+        const data = await signUpWithEmailAndPassword(formData);
+        data.token && handleLogInState(true);
       }
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.message || "Something went wrong");
     }
   };
+
 
   return (
     <div className="min-h-[90dvh] flex items-center justify-center bg-cream-lighter dark:bg-stone-600 p-6">

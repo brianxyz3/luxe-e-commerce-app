@@ -1,5 +1,5 @@
 // import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ShoppingCart, User } from "lucide-react";
@@ -8,8 +8,15 @@ import { Link } from "react-router";
 import Footer from "@/components/Footer";
 import HeaderNav from "@/components/HeaderNav";
 import ProductsSlider from "@/components/ProductsSlider";
+import useProductFetch from "@/controller/useProductFetch";
+import ProductCard from "@/components/ProductCard";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const HomePage = () => {  
+  const {productList, isLoading, error} = useProductFetch(1); 
+
   return (
     <>
       {/* Header */}
@@ -52,8 +59,8 @@ const HomePage = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="py-12 bg-white dark:text-white dark:bg-stone-700">
-          <ProductsSlider heading="Best Sellers" productsArr={[1, 2, 3, 4, 5, 6,7,8]} />
+        <section className="py-12 bg-white dark:text-white dark:bg-stone-700 px-2">
+          <ProductsSlider heading="Best Sellers" productsArr={productList} />
         </section>
 
         {/* All Products */}
@@ -61,18 +68,15 @@ const HomePage = () => {
           <div className="flex justify-between text-gray-800 dark:bg-black dark:text-white">
             <p className="px-3 md:px-6 py-1.5 tracking-wider font-black">All Products</p>
           </div>
-          <div className="flex flex-wrap justify-evenly px-1 md:px-6 shrink-0 gap-6 py-6 bg-white dark:bg-stone-700">
-            {[ 11, 12, 13, 14, 15, 16, 17, 18].map((item) => (
-              <Card key={item} className="rounded-2xl shadow hover:shadow-md min-w-[140px] md:min-w-52 w-2/5 max-w-[275px]">
-                <img src={`/product${item}.jpg`} alt="Product" className="rounded-t-2xl" />
-                <CardContent className="p-4 text-center">
-                  <h3 className="font-semibold">Luxury Serum</h3>
-                  <p className="text-amber-600 font-bold">$49</p>
-                  <Button className="mt-2 bg-amber-500 hover:bg-amber-600 text-white w-full">Add to Cart</Button>
-                </CardContent>
-              </Card>
+          {/* <div className="flex flex-wrap justify-evenly shrink-0 gap-6 py-6 bg-white dark:bg-stone-700"> */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-3 sm:gap-6 py-6 px-2 md:px-6 bg-white dark:bg-stone-700">
+
+            {productList.map((product) => (
+              <ProductCard key={product._id} variant="default" product={product}/>
             ))}
           </div>
+          {isLoading && <div>Loading</div>}
+          {error && <div>Error</div>}
           <div className="bg-white dark:bg-stone-700 pt-10 pb-8">
             <Link to='/products' className="block w-fit mx-auto hover:font-bold text-amber-600 dark:text-amber-300 tracking-wider transition-all">VIEW ALL PRODUCTS</Link>
           </div>
@@ -110,6 +114,7 @@ const HomePage = () => {
       </main>
       {/* Footer */}
       <Footer/>
+      <ToastContainer />
     </>
   )
 }
