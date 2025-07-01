@@ -32,7 +32,7 @@ const HomePage = () => {
                   <h1 className="text-2xl md:text-4xl lg:text-5xl mb-6 tracking-wider font-bold lg:mb-8">Unleash Your <br/> Inner Radiance</h1>
                   <p className="leading-6 mb-6 tracking-wide text-lg lg:text-xl lg:leading-7 lg:mb-7">Look effortlessly radiant with easy-to-apply <br/> products that save time and feel like you.</p>
                   <div className="flex flex-wrap md:flex-nowrap gap-4 font-bold items-center">
-                    <Button className="bg-black dark:bg-white dark:text-black text-white truncate text-base font-bold w-52 h-12"> Shop Quick Beauty Kits</Button>
+                    <Button className="bg-black dark:bg-white dark:text-black text-white truncate text-base font-bold w-52 h-12"> Shop Quick Kits</Button>
                     <Button className="truncate border-2 bg-transparent  hover:text-white hover:border-white dark:border-white dark:text-white text-base font-bold border-black w-52 h-12 text-black transition-all">Consult a Cosmetician</Button>
                   </div>
                 </div>

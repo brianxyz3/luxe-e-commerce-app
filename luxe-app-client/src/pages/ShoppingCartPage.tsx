@@ -2,22 +2,25 @@ import ProductsSlider from "@/components/ProductsSlider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/authContext";
 import { useCart } from "@/context/cartContext";
 import useProductFetch from "@/controller/useProductFetch";
 import { Heart, Trash2 } from "lucide-react";
 import { useState } from "react"
 import { Link } from "react-router";
+import { toast } from "react-toastify";
 
 
 const ShoppingCartPage = () => {
-  const {cart} = useCart();
+  const {cart, removeFromCart} = useCart();
 
   const [showOrderOptions, setShowOrderOptions] = useState(false);
   const {productList} = useProductFetch(6)
+  const {currentUser} = useAuth();
 
 
   const cartLength = cart.length;
-  const deliveryFee = 1100;
+  const deliveryFee = 150;
   const totalPrice = cart.reduce((total, curr) => (
     total + (curr.price * curr.units)
   ), 0)
@@ -39,7 +42,7 @@ const ShoppingCartPage = () => {
               <h5 className="w-1/5">Item Price</h5>
             </div>
             <div className="flex flex-col gap-y-3 mt-8 lg:mt-0 min-h-[50dvh]">
-              {
+              { cart.length > 0 ?
                 cart.map((product, idx) => (
                   <Card key={idx} className="rounded-none overflow-hidden shadow bg-cream-light dark:bg-black py-3">
                     <CardContent className="p-0">
@@ -51,9 +54,9 @@ const ShoppingCartPage = () => {
                           <Link to={`/products/${product.productId}`} className="flex items-center gap-5 lg:gap-10 lg:w-3/5">
                             <img src="/" className="size-28 aspect-square mb-5 lg:mb-0 bg-black" alt="" />
                             <div className="">
-                              <h6 className="text-lg font-semibold mb-1">{product.productName}</h6>
+                              <h6 className="text-lg truncate font-semibold mb-1">{product.productName}</h6>
                               <p className="mb-1">Brand: {product.productId}</p>
-                              <div className="flex gap-4">
+                              <div className="flex truncate gap-2 sm:gap-4">
                                 <p>Color: Blue</p>
                                 <p>Weight: 10kg</p>
                               </div>
@@ -63,7 +66,7 @@ const ShoppingCartPage = () => {
                             <div className="flex items-center gap-3">
                               <p className="flex sm:hidden">Quantity :</p>
                               <Input 
-                                defaultValue={product.units} 
+                                value={product.units} 
                                 type="number"
                                 readOnly
                                 name={product.productId} 
@@ -77,10 +80,19 @@ const ShoppingCartPage = () => {
                         </div>
                       </div>
                       <div className="ms-3 flex gap-4 w-1/3 max-w-44 justify-between">
-                        <div className="flex items-center gap-2">
+                        <button
+                          type="button" 
+                          title="remove item" 
+                          className="flex items-center gap-2"
+                          onClick={async () => {
+                            const {status, message} = await removeFromCart(currentUser.id, product.productId)
+                            if(status === 200) toast.success(message);
+                            if(status !== 200) toast.error(message);
+                          }}
+                          >
                           <Trash2 className="stroke-red-600"/>
                           <p className="text-xs">Remove</p>
-                        </div>
+                        </button>
                         <div className="flex items-center gap-2">
                           <Heart className="stroke-red-300"/>
                           <p className="text-xs">Like</p>
@@ -89,6 +101,9 @@ const ShoppingCartPage = () => {
                     </CardContent>
                   </Card>
                 ))
+                : <h3 className="text-center text-3xl font-semibold mt-20">
+                    Shopping Cart Is Empty
+                </h3>
               }
             </div>
           </div>
@@ -148,7 +163,7 @@ const ShoppingCartPage = () => {
 
           <div className="flex flex-col gap-y-4 mt-2">
             <Button
-            disabled={showOrderOptions} 
+            disabled={showOrderOptions || !cart.length} 
             className={`${showOrderOptions && "hidden"} rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white`}
             onClick={() => setShowOrderOptions(prevValue => !prevValue)}
             >Proceed to Pay</Button>

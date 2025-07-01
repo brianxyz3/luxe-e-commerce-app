@@ -2,7 +2,8 @@ import { heroModelImg, productImg1, productImg2, productImg3, productImg4 } from
 import PlusMinusButton from "@/components/PlusMinusButton"
 import ProductsSlider from "@/components/ProductsSlider"
 import { Button } from "@/components/ui/button"
-import { useCart } from "@/context/cartContext"
+import { useAuth } from "@/context/authContext"
+import { useCart, type CartType } from "@/context/cartContext"
 import type { ProductType } from "@/controller/useProductFetch"
 import useProductFetch from "@/controller/useProductFetch"
 // import useProductFetch, { type ProductType } from "@/controller/useProductFetch"
@@ -16,6 +17,7 @@ import { toast } from "react-toastify"
 
 const ProductDetailsPage = () => {
     const {productId} = useParams()
+    const {currentUser} = useAuth();
     const {updateCart, cart} = useCart();
     const [showMore, setShowMore] = useState(false);
     const [product, setProduct] = useState<ProductType>({_id: "",
@@ -145,13 +147,17 @@ const ProductDetailsPage = () => {
                     <Button className="rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white">Buy Now</Button>
                     <Button 
                     className="rounded-sm text-lg border-2 border-black h-12 font-bold bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white"
-                    onClick={() => {updateCart({productId: product._id,
-                        productBrand: product.brandName,
+                    onClick={ async() => {
+                    const item: CartType = {
+                        productId: product._id,
                         productName: product.name,
+                        productBrand: product.brandName,
                         price: product.price,
                         units: quantity
-                    })
-                    toast.success("Added To Cart")
+                    }
+                    const {status, message} = await updateCart(currentUser.id, item);
+                    if(status === 200) toast.success(message);
+                    if(status !== 200) toast.error(message);
                 }
                 }
                     >{isUnitDifferent ? "Update" : "Add To"} Cart</Button>

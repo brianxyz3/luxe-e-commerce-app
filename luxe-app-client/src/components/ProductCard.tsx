@@ -6,10 +6,12 @@ import type { ProductType } from "@/controller/useProductFetch"
 import { productImg1 } from "@/assets/images"
 import { useCart } from "@/context/cartContext"
 import { toast } from "react-toastify"
+import { useAuth } from "@/context/authContext"
 
 const ProductCard: React.FC<{product: ProductType; variant: "default" | "ghost"}> = ({product, variant}) => {
 
-    const {addToCart} = useCart();
+    const {updateCart} = useCart();
+    const {currentUser} = useAuth();
     
   return (
     <Card key={product._id} className="rounded-2xl shadow flex flex-col justify-between hover:shadow-md min-w-[140px] md:min-w-52 w-full max-w-[275px]">
@@ -22,16 +24,17 @@ const ProductCard: React.FC<{product: ProductType; variant: "default" | "ghost"}
         </Link>
         <Button 
           variant={variant}
-            onClick={() => {
+            onClick={async () => {
               const item = {
                   productId: product._id,
                   productName: product.name,
                   productBrand: product.brandName,
                   price: product.price,
-                  units: 1  
+                  units: 0  
                 }
-              addToCart(item)
-              toast.success("Added To Cart")                
+              const {status, message} = await updateCart(currentUser.id, item);
+              if(status === 200) toast.success(message);
+              if(status !== 200) toast.success(message);
             }}
             className="my-2 px-3 py-1 h-fit bg-amber-500 hover:bg-amber-600 text-white md:w-3/4 block mx-auto w-fit text-sm sm:text-base">Add to Cart</Button>
     </Card>
