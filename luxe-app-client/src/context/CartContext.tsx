@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 interface CartProviderType {
@@ -12,7 +13,7 @@ export interface CartType {
   units: number;
 }
 
-const CartContext = createContext<{cart: CartType[]; isEmpty: boolean; updateCart: (cart: CartType) => void; addToCart: (cart: CartType) => void} | undefined>(undefined);
+const CartContext = createContext<{cart: CartType[]; isEmpty: boolean; updateCart: (userId: string, cart: CartType) => Promise<{status: number; message: any}>;  removeFromCart: (userId: string, itemId: string) => Promise<{status: number; message: any}>} | undefined>(undefined);
 
 export const useCart = () => {
   const context = useContext(CartContext)
@@ -20,56 +21,10 @@ export const useCart = () => {
   return context;
 };
 
-const updateStore = (item: CartType) => {
-  const cartStore = localStorage.getItem("cart");
-  if(cartStore) {
-    const cart: CartType[] = JSON.parse(cartStore)
-    
-    const isInCart = cart.some(product => product.productId == item.productId)
-    if (isInCart) {
-      const updatedCart = cart.map(product => {
-        if (product.productId == item.productId) {
-          product.units = item.units
-          return product
-        } else {
-          return product;
-        }
-      })
-      localStorage.setItem("cart", JSON.stringify(updatedCart))
-      return updatedCart
-    } else {
-      cart.push(item);
-      localStorage.setItem("cart", JSON.stringify(cart)) 
-      return cart
-    }
-  }
-  return [item];
-}
 
-const addToStore = (item: CartType) => {
-  const cartStore = localStorage.getItem("cart");
-  if(cartStore) {
-    const cart: CartType[] = JSON.parse(cartStore)
-    
-    const isInCart = cart.some(product => product.productId == item.productId)
-    if (isInCart) {
-      const updatedCart = cart.map(product => {
-        if (product.productId == item.productId) {
-          product.units += item.units
-          return product
-        } else {
-          return product;
-        }
-      })
-      localStorage.setItem("cart", JSON.stringify(updatedCart))
-      return updatedCart
-    } else {
-      cart.push(item);
-      localStorage.setItem("cart", JSON.stringify(cart)) 
-      return cart
-    }
-  }
-  return [item];
+
+const updateLocalStore = (items: CartType[]) => {
+  localStorage.setItem("cart", JSON.stringify(items));
 }
 
 const CartProvider: React.FC<CartProviderType> = ({children}) => {
@@ -83,16 +38,38 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
       initializeCartState(JSON.parse(cart));
     }, [isEmpty])
 
-    const updateCart = (item: CartType) => {
-      const update = updateStore(item);
-      setCart(update)
-      setIsEmpty(false)
-    }
 
-    const addToCart = (item: CartType) => {
-      const update = addToStore(item);
-      setCart(update)
-      setIsEmpty(false)
+
+    const updateCart = async (userId: string, item: CartType) => {
+      const response = await axios({
+        method: "PUT",
+        url: `http://localhost:4000/${userId}/shoppingCart/update`,
+        data: item
+      })
+    
+      if( response.status == 200) {
+        updateLocalStore(response.data.cart);
+        setCart(response.data.cart)
+        setIsEmpty(false)
+      }
+      return {status: response.status, message: response.data.message}
+    }
+    
+    const removeFromCart = async (userId: string, itemId: string) => {
+      const response = await axios({
+        method: "PUT",
+        url: `http://localhost:4000/${userId}/shoppingCart/delete`,
+        params: {
+          itemId
+        }
+      })
+    
+      if( response.status == 200) {
+        updateLocalStore(response.data.cart);
+        setCart(response.data.cart)
+      }
+      if (response.data.cart.length == 0) setIsEmpty(true)
+      return {status: response.status, message: response.data.message}
     }
     
 
@@ -105,12 +82,12 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
       cart,
       isEmpty,
       updateCart,
-      addToCart
+      removeFromCart,
     }
 
   return (
     <CartContext.Provider value={value}>
-        {children}
+      {children}
     </CartContext.Provider>
   )
 }
