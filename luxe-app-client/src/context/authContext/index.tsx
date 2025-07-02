@@ -7,7 +7,7 @@ interface AuthProviderType {
 interface AuthContextType {
   currentUser: {
     email: string;
-    id: string;
+    id?: string;
     token: string;
   };
   userLoggedIn: boolean;
@@ -26,7 +26,7 @@ export const useAuth = () => {
 
 const AuthProvider: React.FC<AuthProviderType> = ({children}) => {
   const cookieObj: Record<string, string> = {};
-  const [currentUser, setCurrentUser] = useState({email: "", id: "", token: ""});
+  const [currentUser, setCurrentUser] = useState({email: "", token: ""});
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

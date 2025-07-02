@@ -1,13 +1,15 @@
 import { Input } from "@/components/ui/input";
-import { Boxes, MoonStar, Plus, Search, ShoppingCart, Sun, User, UserCheck } from "lucide-react";
+import { Boxes, LogOut, MoonStar, Plus, Search, ShoppingCart, Sun, User, UserCheck } from "lucide-react";
 import { heroModelImg } from "@/assets/images";
-import { Link, NavLink } from "react-router";
-import React, { useEffect, useRef, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router";
+import React, { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTheme } from "@/context/themeContext";
 import { useAuth } from "@/context/authContext";
 import { useCart } from "@/context/cartContext";
+import { signOut } from "@/controller/auth";
+import { toast } from "react-toastify";
 
 gsap.registerPlugin(useGSAP);
 
@@ -17,8 +19,9 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const {theme, toggleTheme} = useTheme();
   const navBtn = useRef(null);
-  const {userLoggedIn} = useAuth();
-  const {cart, isEmpty} = useCart();
+  const {userLoggedIn, handleLogInState} = useAuth();
+  const {cart} = useCart();
+  const navigate = useNavigate();
 
   const navBtnTL = gsap.timeline({
     defaults: {
@@ -100,12 +103,22 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
             <Sun className={`${theme == "dark" && "opacity-0"} size-7 aspect-square duration-300`}/>
           </button>
           <Link to="/shoppingCart"
-          className="relative">
+            className="relative">
               {cart.length > 0 && <div className="w-4 aspect-square absolute -top-3 -z-10 right-1 rounded-full font-bold text-sm flex items-center justify-center"><Boxes className="fill-amber-500 dark:stroke-amber-600 dark:fill-transparent"/></div>}
-            <ShoppingCart className="size-7 aspect-square" />
+              <ShoppingCart className="size-7 aspect-square" />
           </Link>
           <Link className={`${userLoggedIn && "hidden"}`} to="/auth"><User className="size-7 aspect-square" /></Link>
-          <Link className={`${!userLoggedIn && "hidden"}`} to="/dashboard"><UserCheck className="size-7 aspect-square" /></Link>
+          {/* <Link className={`${!userLoggedIn && "hidden"}`} to="/dashboard"><UserCheck className="size-7 aspect-square" /></Link> */}
+          <button title="Log out" type="button" className={`${!userLoggedIn && "hidden"}`} 
+          onClick={async () => {
+            const {message, status} = await signOut();
+            if(status == 200) {
+              handleLogInState(false);
+              toast.success(message);
+              navigate(0)
+            }
+            if(status != 200) toast.error(message);
+          }}><LogOut className="size-7 aspect-square" /></button>
         </div>
       </section>
 
