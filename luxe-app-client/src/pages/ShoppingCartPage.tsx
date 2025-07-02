@@ -24,7 +24,6 @@ const ShoppingCartPage = () => {
     total + (curr.price * curr.units)
   ), 0)
 
-
   return (
     <div className="relative py-6 bg-cream-lighter dark:bg-stone-700">
       <section className="flex flex-wrap-reverse md:flex-nowrap">
@@ -84,12 +83,10 @@ const ShoppingCartPage = () => {
                           title="remove item" 
                           className="flex items-center gap-2"
                           onClick={async () => {
-                            const guestId = localStorage.getItem("guestId");
-                            if (guestId) {
-                              const {status, message} = await removeFromCart(currentUser.id = guestId, product.productId)
-                              if(status === 200) toast.success(message);
-                              if(status !== 200) toast.error(message);
-                            }
+                            const guestId = localStorage.getItem("guestId") || "null";
+                            const {status, message} = await removeFromCart(currentUser.id || guestId, product.productId)
+                            if(status === 200) return toast.success(message);
+                            return toast.error(message);
                           }}
                           >
                           <Trash2 className="stroke-red-600"/>

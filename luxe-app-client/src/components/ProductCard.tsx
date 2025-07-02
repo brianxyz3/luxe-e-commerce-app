@@ -32,14 +32,12 @@ const ProductCard: React.FC<{product: ProductType; variant: "default" | "ghost"}
                   price: product.price,
                   units: 0  
                 }
-              const guestId = localStorage.getItem("guestId");
-              if (guestId) {
-                const {status, message} = await updateCart(currentUser.id = guestId, item);
-                if(status === 200) toast.success(message);
-                if(status !== 200) toast.error(message);
-              } else {
-                toast.error("An Error Occurred, Try Again");
-              }
+                const guestId = localStorage.getItem("guestId") || "null";
+                const {status, message} = await updateCart(currentUser.id || guestId, item);
+                if(status === 200) return toast.success(message);
+                return toast.error(message);
+                // toast.error("An Error Occurred, Try Again");
+              
             }}
             className="my-2 px-3 py-1 h-fit bg-amber-500 hover:bg-amber-600 text-white md:w-3/4 block mx-auto w-fit text-sm sm:text-base">Add to Cart</Button>
     </Card>

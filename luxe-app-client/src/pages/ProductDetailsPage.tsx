@@ -154,12 +154,11 @@ const ProductDetailsPage = () => {
                         price: product.price,
                         units: quantity
                     }
-                    const guestId = localStorage.getItem("guestId");
-                    if (guestId) {
-                        const {status, message} = await updateCart(currentUser.id = guestId, item);
-                        if(status === 200) toast.success(message);
-                        if(status !== 200) toast.error(message);
-                    }
+                    const guestId = localStorage.getItem("guestId") || "null";
+
+                    const {status, message} = await updateCart(currentUser.id || guestId, item);
+                    if(status === 200) return toast.success(message);
+                    return toast.error(message);
                 }
                 }
                     >{isUnitDifferent ? "Update" : "Add To"} Cart</Button>
