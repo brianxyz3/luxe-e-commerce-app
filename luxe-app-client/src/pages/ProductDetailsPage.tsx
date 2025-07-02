@@ -37,7 +37,6 @@ const ProductDetailsPage = () => {
 
     const [quantity, setQuantity] = useState<number>(() => {
         const productInCart = cart.filter(item => item.productId === productId)
-        console.log(productInCart)
         if(productInCart.length > 0) return productInCart[0].units;
         return 1;
     });
@@ -151,13 +150,16 @@ const ProductDetailsPage = () => {
                     const item: CartType = {
                         productId: product._id,
                         productName: product.name,
-                        productBrand: product.brandName,
+                        productBrandName: product.brandName,
                         price: product.price,
                         units: quantity
                     }
-                    const {status, message} = await updateCart(currentUser.id, item);
-                    if(status === 200) toast.success(message);
-                    if(status !== 200) toast.error(message);
+                    const guestId = localStorage.getItem("guestId");
+                    if (guestId) {
+                        const {status, message} = await updateCart(currentUser.id = guestId, item);
+                        if(status === 200) toast.success(message);
+                        if(status !== 200) toast.error(message);
+                    }
                 }
                 }
                     >{isUnitDifferent ? "Update" : "Add To"} Cart</Button>

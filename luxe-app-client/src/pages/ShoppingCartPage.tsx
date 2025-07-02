@@ -12,12 +12,11 @@ import { toast } from "react-toastify";
 
 
 const ShoppingCartPage = () => {
-  const {cart, removeFromCart} = useCart();
+  const {cart, isEmpty, removeFromCart} = useCart();
 
   const [showOrderOptions, setShowOrderOptions] = useState(false);
   const {productList} = useProductFetch(6)
   const {currentUser} = useAuth();
-
 
   const cartLength = cart.length;
   const deliveryFee = 150;
@@ -41,7 +40,7 @@ const ShoppingCartPage = () => {
               <h5 className="w-1/5">Quantity</h5>
               <h5 className="w-1/5">Item Price</h5>
             </div>
-            <div className="flex flex-col gap-y-3 mt-8 lg:mt-0 min-h-[50dvh]">
+            <div className={`${!isEmpty && "min-h-[50dvh]"} flex flex-col gap-y-3 mt-8 lg:mt-0`}>
               { cart.length > 0 ?
                 cart.map((product, idx) => (
                   <Card key={idx} className="rounded-none overflow-hidden shadow bg-cream-light dark:bg-black py-3">
@@ -55,7 +54,7 @@ const ShoppingCartPage = () => {
                             <img src="/" className="size-28 aspect-square mb-5 lg:mb-0 bg-black" alt="" />
                             <div className="">
                               <h6 className="text-lg truncate font-semibold mb-1">{product.productName}</h6>
-                              <p className="mb-1">Brand: {product.productId}</p>
+                              <p className="mb-1">Brand: {product.productBrandName}</p>
                               <div className="flex truncate gap-2 sm:gap-4">
                                 <p>Color: Blue</p>
                                 <p>Weight: 10kg</p>
@@ -85,9 +84,12 @@ const ShoppingCartPage = () => {
                           title="remove item" 
                           className="flex items-center gap-2"
                           onClick={async () => {
-                            const {status, message} = await removeFromCart(currentUser.id, product.productId)
-                            if(status === 200) toast.success(message);
-                            if(status !== 200) toast.error(message);
+                            const guestId = localStorage.getItem("guestId");
+                            if (guestId) {
+                              const {status, message} = await removeFromCart(currentUser.id = guestId, product.productId)
+                              if(status === 200) toast.success(message);
+                              if(status !== 200) toast.error(message);
+                            }
                           }}
                           >
                           <Trash2 className="stroke-red-600"/>
@@ -167,7 +169,7 @@ const ShoppingCartPage = () => {
             className={`${showOrderOptions && "hidden"} rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white`}
             onClick={() => setShowOrderOptions(prevValue => !prevValue)}
             >Proceed to Pay</Button>
-            <Button className="rounded-sm text-lg border-2 border-black h-12 bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white">Continue Shopping</Button>
+            <Link to="/products" className="rounded-sm font-semibold flex justify-center items-center text-lg border-2 border-black h-12 bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white">Continue Shopping</Link>
           </div>
         </aside>
       </section>
