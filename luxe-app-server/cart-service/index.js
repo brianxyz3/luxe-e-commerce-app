@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const dbUrl = process.env.DB_URL;
 
 const express = require("express");
-const axios = require("axios");
 const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync.js");
 const User = require("../shared/database/models/user.js");
@@ -59,6 +58,8 @@ app.put(
   "/shoppingCart/:userId/update",
   catchAsync(async (req, res) => {
     const { userId } = req.params;
+    console.log(userId);
+    
 
     const item = req.body;
     const user = await User.findById(userId);
@@ -71,7 +72,9 @@ app.put(
   })
 );
 
-app.put("/shoppingCart/guest/:guestId/update", catchAsync(async (req, res) => {
+app.put(
+  "/shoppingCart/guest/:guestId/update",
+  catchAsync(async (req, res) => {
   const { guestId } = req.params;
   console.log(guestId);
   
@@ -131,6 +134,39 @@ app.put(
     res.status(200).json({ cart: guest.cart, message: "Removed From Cart" });
   })
 );
+
+app.get(
+  "/user/login/:guestId/cart/update",
+  catchAsync(async (req, res) => {
+    const {guestId} = req.params;
+    const {userCart} = req.body;
+    const guest = await GuestUser.findById(guestId);
+    
+    const newCart = guest.cart.filter((product) => {
+      let isInCart = false;
+      for (let index = 0; index < userCart.length; index++) {
+        if (product.productId == userCart[index].productId) {
+          isInCart = true;
+        }
+        continue;
+      }
+      return !isInCart;
+    })
+
+    const updatedCart = [...userCart, ...newCart];
+    res.status(200).json({updatedCart});
+  })
+);
+
+app.delete(
+  "/user/login/:guestId/delete",
+  catchAsync(async (req, res) => {
+    const {guestId} = req.params;
+
+    await GuestUser.findByIdAndDelete(guestId);
+    res.status(200).json();
+  })
+)
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);

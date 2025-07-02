@@ -19,6 +19,10 @@ body {
   background-color: #000;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .disable_scroll {
   overflow-y: hidden;
 }

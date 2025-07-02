@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import { logInWithEmailAndPassword, signUpWithEmailAndPassword } from "@/controller/auth";
 import { useAuth } from "@/context/authContext";
 import { useNavigate } from "react-router";
+import { useCart } from "@/context/cartContext";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ email: "", password: "", firstName: "", lastName: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", firstName: "", lastName: "", guestId: localStorage.getItem("guestId") });
   const [error, setError] = useState("");
   const {handleLogInState, userLoggedIn} = useAuth();
+  const {updateLocalStore} = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
     if(userLoggedIn) navigate("/products")
-  }, [])
+  }, [userLoggedIn])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,10 +29,12 @@ export default function AuthPage() {
     try {
       if (isLogin) {
         const data = await logInWithEmailAndPassword(formData);
-        data.token && handleLogInState(true);
+        if(data.cart) updateLocalStore(data.cart)
+        data.userDetail.token && handleLogInState(true);
       } else {
         const data = await signUpWithEmailAndPassword(formData);
-        data.token && handleLogInState(true);
+        if(data.cart) updateLocalStore(data.cart)
+        data.userDetail.token && handleLogInState(true);
       }
     } catch (err: any) {
       console.error(err);

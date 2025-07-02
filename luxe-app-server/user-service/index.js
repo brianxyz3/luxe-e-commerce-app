@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 const catchAsync = require("../shared/utlis/catchAsync.js");
 const hashSaltRounds = 10;
 
@@ -38,24 +39,53 @@ app.post(
   "/auth/login",
   catchAsync(async (req, res) => {
     try {
-      const { email, password } = req.body;
-      const user = await User.find({ email });
+      const { email, password, guestId } = req.body;
+      const userArr = await User.find({ email });
       
+      const user = userArr[0];
       
       const isPassword = await bcrypt
-        .compare(password, user[0].password)
+        .compare(password, user.password)
         .catch((err) => console.log("Bcrypt error occurred: " + err));
         if (isPassword) {
           const token = generateToken(email);
+          
+          if (guestId && guestId != "null") {
+            const updateCartResponse = await axios({
+              method: "GET",
+              url: `http://localhost:4000/user/login/${guestId}/cart/update`,
+              data: { userCart: user.cart },
+            });
+
+            user.cart = updateCartResponse.data.updatedCart;          
+
+            await user.save();
+          }          
 
           const data = {
-            email: user.email,
-            id: user._id,
-            token,
+            userDetail: {
+              email: user.email,
+              id: user._id,
+              token,
+            },
+            cart: user.cart,
             message: "User Logged In Successfully",
           };
 
           res.status(200).json(data);
+          
+          if (guestId && guestId != "null") {
+            axios({
+              method: "DELETE",
+              url: `http://localhost:4000/user/login/${guestId}/delete`,
+            }).then(({status}) => {
+              if(status == 200) console.log(guestId + ", Guest User Delete Successful");
+              return;
+            }).catch((err) => {
+              console.log(`Error Occurred in Guest ${guestId} Delete. Try Again`);
+              console.log(err);
+            })
+          }
         } else {
           res.status(401).json({ message: "Incorrect email/Password" });
         }
@@ -86,10 +116,12 @@ app.post(
       console.log("saved");
 
       const data = {
-        email: savedUser.email,
-        id: savedUser._id,
-        token,
-        message: "User Registered Successfully"
+        userDetail: {
+          email: savedUser.email,
+          id: savedUser._id,
+          token,
+        },
+        message: "User Registered Successfully",
       };
       res.status(201).json(data);
     } catch (err) {
@@ -98,11 +130,35 @@ app.post(
     }
   })
 );
+// app.post(
+//   "/auth/register/guest",
+//   catchAsync(async (req, res) => {
+//     try {
+//       const {guestId} = req.body;
+      
+//       const newGuest = new GuestUser({
+//         guestId,
+//       });
+      
+      
+//       const savedGuest = await newGuest.save().catch((err) => console.log(err));
 
-app.post("/signOut", (req, res) => {
-  const token = req.body;
+//       const data = {
+//         guest: savedGuest,
+//         message: "Guest Registered Successfully",
+//       };
+//       res.status(201).json(data);
+//     } catch (err) {
+//       console.log(`Error occurred in registring new user: ${err}`); 
+//       return; 
+//     }
+//   })
+// );
+
+app.get("/auth/signOut", (req, res) => {
+  // const token = req.body;
   // expire token
-  res.json();
+  res.status(200).json({message: "GoodBye, Come Back Soon."});
 });
 
 

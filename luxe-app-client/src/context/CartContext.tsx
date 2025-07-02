@@ -14,7 +14,7 @@ export interface CartType {
   units: number;
 }
 
-const CartContext = createContext<{cart: CartType[]; isEmpty: boolean; updateCart: (userId: string, cart: CartType) => Promise<{status: number; message: any}>; removeFromCart: (userId: string, itemId: string) => Promise<{status: number; message: any}>} | undefined>(undefined);
+const CartContext = createContext<{cart: CartType[]; isEmpty: boolean; updateLocalStore: (items: CartType[]) => void; updateCart: (userId: string, cart: CartType) => Promise<{status: number; message: any}>; removeFromCart: (userId: string, itemId: string) => Promise<{status: number; message: any}>} | undefined>(undefined);
 
 export const useCart = () => {
   const context = useContext(CartContext)
@@ -62,7 +62,7 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
       return {status: response.status, message: response.data.message}
     }
     
-    const removeFromCart = async (userId: string, itemId: string) => {
+    const removeFromCart = async (userId: string | null = localStorage.getItem("guestId"), itemId: string) => {
       let url: string;
       if(userLoggedIn) {
         url = `http://localhost:4000/shoppingCart/${userId}/delete`;
@@ -93,6 +93,7 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
       isEmpty,
       updateCart,
       removeFromCart,
+      updateLocalStore,
     }
 
   return (

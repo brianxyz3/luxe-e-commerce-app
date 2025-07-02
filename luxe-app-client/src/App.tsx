@@ -9,18 +9,18 @@ import AuthPage from "./pages/AuthPage"
 function App() {
   return (
     <>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage/>}/>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage/>}/>
 
-            <Route element={<MainLayout/>}>
-              <Route path="/products" element={<ProductsPage/>}/>
-              <Route path="/products/:productId" element={<ProductDetailsPage/>}/>
-              <Route path="/shoppingCart" element={<ShoppingCartPage/>}/>
-              <Route path="/auth" element={<AuthPage/>}/>
-            </Route>
-          </Routes>
-        </BrowserRouter>
+          <Route element={<MainLayout/>}>
+            <Route path="/products" element={<ProductsPage/>}/>
+            <Route path="/products/:productId" element={<ProductDetailsPage/>}/>
+            <Route path="/shoppingCart" element={<ShoppingCartPage/>}/>
+            <Route path="/auth" element={<AuthPage/>}/>
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
