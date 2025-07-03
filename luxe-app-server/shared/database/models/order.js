@@ -1,35 +1,51 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const OrderSchema = new Schema({
-  cart: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Cart",
-      required: true,
+const OrderSchema = new Schema(
+  {
+    cart: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+        },
+        productName: {
+          type: String,
+        },
+        productBrandName: {
+          type: String,
+        },
+        productImg: String,
+        price: {
+          type: Number,
+        },
+        units: {
+          type: Number,
+        },
+      },
+    ],
+    
+    status: {
+      type: String,
+      enum: ["Pending", "Cancelled", "Completed"],
+      default: "Pending",
     },
-  ],
-  status: {
-    type: String,
-    enum: ["pending", "cancelled", "completed"],
-  },
-  createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  shippindAddress: {
-    type: String,
-    required: true,
-  },
-  paymentMethod: {
-    type: String,
-    default: ["pay on delivery"],
-  },
-  createdAt: {
-    type: String,
-    default: Date.now.toString()
-    }
-});
 
-module.exports = mongoose.model("Order", OrderSchema);
+    shippingAddress: String,
+    total: Number,
+
+    paymentMethod: {
+      type: String,
+      enum: ["payment on delivery", "cryptocurrency transfer", "bank transfer"],
+    },
+    orderBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.Model("Order", OrderSchema);
