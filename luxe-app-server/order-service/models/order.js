@@ -31,10 +31,10 @@ const OrderSchema = new Schema(
       default: "Pending",
     },
 
-    shippingAddress: String,
-    total: Number,
+    deliveryAddress: String,
+    totalAmount: Number,
 
-    paymentMethod: {
+    paymentOption: {
       type: String,
       enum: ["payment on delivery", "cryptocurrency transfer", "bank transfer"],
     },
@@ -48,4 +48,4 @@ const OrderSchema = new Schema(
   }
 );
 
-module.exports = mongoose.Model("Order", OrderSchema);
+module.exports = mongoose.model("Order", OrderSchema);
