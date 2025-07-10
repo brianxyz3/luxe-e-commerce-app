@@ -36,7 +36,16 @@ app.get("/products", async (req, res) => {
   res.json(product);
 });
 
+app.get("/products/search", async (req, res) => {
+  const {page, category= "all", type= "all"} = req.query;
 
+  const skip = (page - 1) * pageLimit;
+
+  const product = await Product.find({ category: { $in : [category] }, type: { $in: [type] } }).skip(skip).limit(pageLimit).catch((err) => console.log(err));
+
+  return res.json(product);
+
+});
 
 app.get("/products/:productId", async (req, res) => {
   const {productId} = req.params;
