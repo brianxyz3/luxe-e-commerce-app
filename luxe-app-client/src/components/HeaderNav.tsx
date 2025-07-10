@@ -115,7 +115,6 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
             if(status == 200) {
               handleLogInState(false);
               toast.success(message);
-              navigate(0)
             }
             if(status != 200) toast.error(message);
           }}><LogOut className="size-7 aspect-square" /></button>
@@ -144,8 +143,8 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
         </div>
         <nav className="pb-2 ps-6 dark:bg-stone-600">
           <div className="text-cream-darker dark:text-cream-light overflow-auto text-xl font-bold flex gap-5 px-2.5 ms-0.5 py-4">
-            {['Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
-              <Link to="/" key={item} className="hover:text-amber-300 scale-y-125 text-nowrap transition-colors">{item}</Link>
+            {['Skin-care', 'Hair-care', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
+              <NavLink to={`/products/search?category=${item.toLocaleLowerCase()}`} key={item} onClick={toggleNavBar} className="hover:text-amber-300 scale-y-125 text-nowrap transition-colors">{item}</NavLink>
             ))}
           </div>
           <Link to="/products" className="underline">shop all products</Link>

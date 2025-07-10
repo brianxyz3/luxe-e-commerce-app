@@ -25,13 +25,13 @@ function setCookie(name: string , value: string, days: number) {
 
 const initializeUser = (user: UserObj) => {
     Object.entries(user).forEach(([Key, value]) => {
-        setCookie(Key, value, 1)
+        setCookie(Key, value, 7)
     })
     localStorage.setItem("guestId", "null");
 }
 
 const signUpWithEmailAndPassword = async (formData: RegisterDataObj) => {
-    const { data } = await axios.post("http://localhost:3000/auth/register", formData);
+    const { data } = await axios.post("http://localhost:3000/api/users/register", formData);
     if (data.userDetail.token) {
         initializeUser(data.userDetail);
         console.log("Sign Up Authentication successful");
@@ -40,7 +40,7 @@ const signUpWithEmailAndPassword = async (formData: RegisterDataObj) => {
   };
 
 const logInWithEmailAndPassword = async (formData: loginDataObj) => {
-    const { data } = await axios.post("http://localhost:3000/auth/login", formData);
+    const { data } = await axios.post("http://localhost:3000/api/users/login", formData);
     if (data.userDetail.token) {
         initializeUser(data.userDetail);
         console.log("Log In Authentication successful");
@@ -49,7 +49,7 @@ const logInWithEmailAndPassword = async (formData: loginDataObj) => {
   };
 
 const signOut = async () => {
-    const { status, data } = await axios.get("http://localhost:3000/auth/signOut");
+    const { status, data } = await axios.get("http://localhost:3000/api/users/signOut");
     if (status) {
         localStorage.setItem("cart", JSON.stringify([]));
         const splitCookie = document.cookie.split(";");

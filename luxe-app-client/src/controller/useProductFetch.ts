@@ -11,26 +11,36 @@ export interface ProductType {
     price: number;
 }
 
-function useProductFetch(pageNumber: number, category?: string) {
+function useProductFetch(isGetAll: boolean, pageNumber: number, searchInput?:string,  searchFilter?: Record<string, string>) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [productList, setProductList] = useState<ProductType[]>([]);
+
+    let apiUrl;
+    if (isGetAll) {
+        console.log("get all products")
+        apiUrl = "http://localhost:3000/api/products";
+    } else {
+        apiUrl = "http://localhost:3000/api/products/search";
+    }
+
 
     useEffect(() => {
         setIsLoading(true);
         setError(false);
         let cancel: () => void
         axios.get(
-            "http://localhost:7000/products",
+            apiUrl,
             {
             params: {
                 page: pageNumber,
-                category,
+                ...searchFilter,
+                searchInput
             },
             cancelToken: new axios.CancelToken(c => cancel = c)
         }).then(response => {
-            setProductList([...response.data]);
+            if (response.data.length > 0)setProductList([...response.data]);
             setHasMore(response.data.length > 0);
             setIsLoading(false);
         }).catch(err => {
@@ -39,7 +49,7 @@ function useProductFetch(pageNumber: number, category?: string) {
             setError(true)
         })
         return () => cancel()
-    }, [pageNumber, category])
+    }, [pageNumber, searchInput, searchFilter])
 
   return {productList, isLoading, error, hasMore}
 }
