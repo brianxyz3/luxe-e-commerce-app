@@ -231,7 +231,7 @@ div .product_description_container .details {
   transition: grid-template-rows .5s;
 }
 
-aside .order_options_container {
+aside .order_options_container{
   display: grid;
   grid-template-rows: .1fr;
   transition: grid-template-rows .5s;

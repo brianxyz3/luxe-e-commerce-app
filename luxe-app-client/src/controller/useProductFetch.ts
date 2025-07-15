@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 export interface ProductType {
     _id: string;
     name: string;
-    category: string;
+    category: string[];
     brandName: string;
     description: string;
-    type: string;
+    type: string[];
     price: number;
 }
 
@@ -15,14 +15,13 @@ function useProductFetch(isGetAll: boolean, pageNumber: number, searchInput?:str
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(true);
     const [hasMore, setHasMore] = useState(true);
-    const [productList, setProductList] = useState<ProductType[]>([]);
+    const [productList, setProductList] = useState<ProductType[] | undefined>([]);
 
     let apiUrl;
     if (isGetAll) {
-        console.log("get all products")
-        apiUrl = "http://localhost:3000/api/products";
+        apiUrl = "/api/products";
     } else {
-        apiUrl = "http://localhost:3000/api/products/search";
+        apiUrl = "/api/products/search";
     }
 
 
@@ -40,7 +39,11 @@ function useProductFetch(isGetAll: boolean, pageNumber: number, searchInput?:str
             },
             cancelToken: new axios.CancelToken(c => cancel = c)
         }).then(response => {
-            if (response.data.length > 0)setProductList([...response.data]);
+            if (response.data.length > 0) {
+                setProductList([...response.data]);
+            } else {
+                setProductList(undefined);
+            }
             setHasMore(response.data.length > 0);
             setIsLoading(false);
         }).catch(err => {

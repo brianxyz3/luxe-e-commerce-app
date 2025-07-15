@@ -49,7 +49,7 @@ const logInWithEmailAndPassword = async (formData: loginDataObj) => {
   };
 
 const signOut = async () => {
-    const { status, data } = await axios.get("http://localhost:3000/api/users/signOut");
+    const { status, data } = await axios.get("/api/users/signOut");
     if (status) {
         localStorage.setItem("cart", JSON.stringify([]));
         const splitCookie = document.cookie.split(";");

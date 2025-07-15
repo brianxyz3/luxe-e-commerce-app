@@ -5,24 +5,47 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/authContext";
 import { useCart } from "@/context/cartContext";
 import useProductFetch from "@/controller/useProductFetch";
+import axios from "axios";
 import { Heart, Trash2 } from "lucide-react";
-import { useState } from "react"
-import { Link } from "react-router";
+import React, { useState } from "react"
+import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 
 const ShoppingCartPage = () => {
   const {cart, isEmpty, removeFromCart} = useCart();
-
+  const navigate = useNavigate();
   const [showOrderOptions, setShowOrderOptions] = useState(false);
-  const {productList} = useProductFetch(6)
-  const {currentUser} = useAuth();
+  const [formData, setFormData] = useState({paymentOption: "", deliveryAddress: ""})
+  const {productList} = useProductFetch(true, 6)
+  const {currentUser, userLoggedIn} = useAuth();
 
   const cartLength = cart.length;
   const deliveryFee = 150;
   const totalPrice = cart.reduce((total, curr) => (
     total + (curr.price * curr.units)
-  ), 0)
+  ), 0);
+
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    axios({
+      method: "POST",
+      url: `/api/order/${currentUser.id}`,
+      data: formData,
+    }).then(({status, data, statusText}) => {
+      if (status === 201) {
+        console.log(statusText)
+        // console.log(data.message)
+      }
+    })
+  }
+
+  const handleFormInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const name = evt.target.name;
+    setFormData((currState) => (
+      {...currState, [name]: evt.target.value}
+    ))
+  }
 
   return (
     <div className="relative py-6 bg-cream-lighter dark:bg-stone-700">
@@ -135,7 +158,7 @@ const ShoppingCartPage = () => {
 
           {/* Order Options */}
           <div className="order_options_container">
-            <form className={`${showOrderOptions && "open"} bg-cream-light dark:bg-black mt-6 overflow-hidden`}>
+            <form onSubmit={handleSubmit} className={`${showOrderOptions && "open"} bg-cream-light dark:bg-black mt-6 overflow-hidden`}>
               <fieldset className="px-4 my-4">
                 <div className="flex justify-between">
                   <legend className="text-2xl font-bold">Order Confirmation</legend>
@@ -143,16 +166,34 @@ const ShoppingCartPage = () => {
                 </div>
                 <div className="flex flex-col gap-2.5">
                   <p className="text-lg font-semibold">Payment Options:</p>
-                  <label htmlFor="payOnOrder">
-                    <input className="mr-2" checked readOnly value="payment on order" title="payment on order" type="radio" name="paymentOption" id="payOnOrder" />
-                    Payment On Delivery
+                  <label htmlFor="payOnDelivery">
+                    <input
+                      required 
+                      className="mr-2" 
+                      value="payment on delivery" 
+                      title="payment on delivery" 
+                      type="radio" 
+                      name="paymentOption" 
+                      id="payOnDelivery"
+                      onChange={handleFormInput} 
+                      />
+                      Payment On Delivery
                   </label>
 
                   <p className="text-lg font-semibold">Delivery Address:</p>
-                  <Input className="border-black dark:border-white" title="Address" type="text" placeholder="Delivery Address" />
+                  <Input 
+                    required
+                    name="deliveryAddress" 
+                    value={formData.deliveryAddress} 
+                    className="border-black dark:border-white" 
+                    title="Address" 
+                    type="text" 
+                    placeholder="Delivery Address" 
+                    onChange={handleFormInput}
+                  />
                   <div className="mt-4">
-                    <Button 
-                      className="w-full rounded-sm text-lg border-2 border-black dark:border-white h-12 dark:bg-black dark:text-white"
+                    <Button type="submit"
+                      className="w-full rounded-sm text-lg  dark:border-white h-12 dark:bg-black dark:text-white"
                       >Confirm Order</Button>  
                   </div>
                 </div>
@@ -163,8 +204,15 @@ const ShoppingCartPage = () => {
           <div className="flex flex-col gap-y-4 mt-2">
             <Button
             disabled={showOrderOptions || !cart.length} 
-            className={`${showOrderOptions && "hidden"} rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white`}
-            onClick={() => setShowOrderOptions(prevValue => !prevValue)}
+            className={`${showOrderOptions && "hidden"} rounded-sm text-lg h-12 dark:bg-black dark:text-white`}
+            onClick={() => {
+                if(userLoggedIn) {
+                  setShowOrderOptions(prevValue => !prevValue)
+                } else {
+                  navigate("/auth")
+                }
+              } 
+            }
             >Proceed to Pay</Button>
             <Link to="/products" className="rounded-sm font-semibold flex justify-center items-center text-lg border-2 border-black h-12 bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white">Continue Shopping</Link>
           </div>
@@ -172,9 +220,12 @@ const ShoppingCartPage = () => {
       </section>
 
       {/* Suggested Products */}
-      <section className="py-4 px-4 mt-8 bg-white dark:bg-stone-700 w-full">
-        <ProductsSlider heading="Suggested Products" productsArr={productList} />
-      </section>
+      { productList?
+        <section className="py-4 px-4 mt-8 bg-white dark:bg-stone-700 w-full">
+          <ProductsSlider heading="Suggested Products" productsArr={productList} />
+        </section>
+      : <div className="text-3xl pt-12 text-gray-300 font-bold text-center tracking-wider">No Product Found</div>  
+      }
     </div>
   )
 }

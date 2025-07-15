@@ -123,9 +123,12 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
 
       {/* Navigation Menu */}
       <nav className="hidden bg-cream-darker md:px-6 py-2 text-sm font-medium text-gray-800 md:flex justify-center gap-5">
-        {['Home', 'Shop All', 'Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
-          <NavLink to="/" key={item} className="hover:text-amber-300 text-nowrap transition-colors">{item}</NavLink>
+      <NavLink to="/" key={"home"} className="hover:text-amber-300 text-nowrap transition-colors">Home</NavLink>
+      <NavLink to="/products" key={"shop-all"} className="hover:text-amber-300 text-nowrap transition-colors">Shop All</NavLink>
+        {["Skin-care", "Hair-care", "Makeup", "Fragrance", "Gifts", "Sale"].map((item) => (
+          <NavLink to={`/products/search?category=${item.toLocaleLowerCase()}`} key={item} className="hover:text-amber-300 text-nowrap transition-colors">{item}</NavLink>
         ))}
+        <NavLink to="/about" key={"about"} className="hover:text-amber-300 text-nowrap transition-colors">About Us</NavLink>
       </nav>
 
       {/* Mobile Navigation Menu */} 
@@ -143,11 +146,12 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
         </div>
         <nav className="pb-2 ps-6 dark:bg-stone-600">
           <div className="text-cream-darker dark:text-cream-light overflow-auto text-xl font-bold flex gap-5 px-2.5 ms-0.5 py-4">
-            {['Skin-care', 'Hair-care', 'Makeup', 'Fragrance', 'Gifts', 'Sale', 'About Us'].map((item) => (
+            {["Skin-care", "Hair-care", "Makeup", "Fragrance", "Gifts", "Sale"].map((item) => (
               <NavLink to={`/products/search?category=${item.toLocaleLowerCase()}`} key={item} onClick={toggleNavBar} className="hover:text-amber-300 scale-y-125 text-nowrap transition-colors">{item}</NavLink>
             ))}
+            <NavLink to="/about" onClick={toggleNavBar} key={"about"} className="hover:text-amber-300 text-nowrap transition-colors">About Us</NavLink>
           </div>
-          <Link to="/products" className="underline">shop all products</Link>
+          <Link to="/products" onClick={toggleNavBar} className="underline">shop all products</Link>
         </nav>
         <div className="pb-6 px-6 overflow-auto dark:bg-gradient-to-b from-stone-700 to-15% to-black">
           {
@@ -155,7 +159,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
               <Link to="/" key={idx} className="flex text-[#7f6251] items-center gap-3 py-2.5 border-b border-cream-dbg-cream-darker">
                 <img src={heroModelImg} alt="" className="w-16 aspect-square rounded-md" />
                 <div className="flex items-baseline gap-x-0.5">
-                  <p>item- {item}</p>
+                  <p className="truncate">item- {item}</p>
                   <Plus className="size-3"/>
                 </div>
               </Link>

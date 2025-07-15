@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 const HomePage = () => {  
-  const {productList, isLoading, error} = useProductFetch(1); 
+  const {productList, isLoading, error} = useProductFetch(true, 1); 
 
   return (
     <>
@@ -60,7 +60,10 @@ const HomePage = () => {
 
         {/* Featured Products */}
         <section className="py-12 bg-white dark:text-white dark:bg-stone-700 px-2">
-          <ProductsSlider heading="Best Sellers" productsArr={productList} />
+          {productList ?
+            <ProductsSlider heading="Best Sellers" productsArr={productList} />
+            : <div className="text-3xl pt-12 text-gray-300 font-bold text-center tracking-wider">No Product Found</div>
+          }
         </section>
 
         {/* All Products */}
@@ -69,12 +72,14 @@ const HomePage = () => {
             <p className="px-3 md:px-6 py-1.5 tracking-wider font-black">All Products</p>
           </div>
           {/* <div className="flex flex-wrap justify-evenly shrink-0 gap-6 py-6 bg-white dark:bg-stone-700"> */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-3 sm:gap-6 py-6 px-2 md:px-6 bg-white dark:bg-stone-700">
-
-            {productList.map((product) => (
-              <ProductCard key={product._id} variant="default" product={product}/>
-            ))}
-          </div>
+          { productList? 
+            <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-3 sm:gap-6 py-6 px-2 md:px-6 bg-white dark:bg-stone-700">
+              {productList.map((product) => (
+                <ProductCard key={product._id} variant="default" product={product}/>
+              ))}
+            </div>
+          : <div className="text-3xl pt-12 text-gray-300 font-bold text-center tracking-wider">No Product Found</div>
+          }
           {isLoading && <div>Loading</div>}
           {error && <div>Error</div>}
           <div className="bg-white dark:bg-stone-700 pt-10 pb-8">

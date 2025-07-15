@@ -47,9 +47,9 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
     const updateCart = async (userId: string, item: CartType) => {
       let url: string;
       if(userLoggedIn) {
-        url = `http://localhost:4000/shoppingCart/${userId}/update`;
+        url = `/api/shoppingCart/${userId}/update`;
       } else {
-        url = `http://localhost:4000/shoppingCart/guest/${userId}/update`;
+        url = `/api/shoppingCart/guest/${userId}/update`;
       }
       const response = await axios({
         method: "PUT",
@@ -65,9 +65,9 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
     const removeFromCart = async (userId: string | null = localStorage.getItem("guestId"), itemId: string) => {
       let url: string;
       if(userLoggedIn) {
-        url = `http://localhost:4000/shoppingCart/${userId}/delete`;
+        url = `/api/shoppingCart/${userId}/delete`;
       } else {
-        url = `http://localhost:4000/shoppingCart/guest/${userId}/delete`;
+        url = `/api/shoppingCart/guest/${userId}/delete`;
       }
       const response = await axios({
         method: "PUT",

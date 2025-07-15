@@ -4,9 +4,7 @@ import ProductsSlider from "@/components/ProductsSlider"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/authContext"
 import { useCart, type CartType } from "@/context/cartContext"
-import type { ProductType } from "@/controller/useProductFetch"
-import useProductFetch from "@/controller/useProductFetch"
-// import useProductFetch, { type ProductType } from "@/controller/useProductFetch"
+import useProductFetch, { type ProductType } from "@/controller/useProductFetch"
 import axios from "axios"
 import { Star } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -24,25 +22,25 @@ const ProductDetailsPage = () => {
         name: "",
         brandName: "",
         description: "",
-        category: "",
-        type: "",
+        category: [],
+        type: [],
         price: 0,});
 
+    const [quantity, setQuantity] = useState<number>(1);
+
     useEffect (() => {
-        axios.get(`http://localhost:7000/products/${productId}`).then(response => {
+        axios.get(`/api/products/${productId}`).then(response => {
             setProduct(response.data)
+            const productInCart = cart.filter(item => item.productId == productId)
+            if(productInCart.length > 0) return setQuantity(productInCart[0].units);
+            return setQuantity(1);
         })
     }, [productId]);
 
 
-    const [quantity, setQuantity] = useState<number>(() => {
-        const productInCart = cart.filter(item => item.productId === productId)
-        if(productInCart.length > 0) return productInCart[0].units;
-        return 1;
-    });
     
 
-    const {productList} = useProductFetch(1, product.category);
+    const {productList} = useProductFetch(true, 1);
 
     const isUnitDifferent = cart.some((item) => item.productId === productId && item.units !== quantity)
     
@@ -84,13 +82,13 @@ const ProductDetailsPage = () => {
                     </div>
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">Type:</p>
-                        <p>{product.type}</p>
+                        <p>{product.type[1]}</p>
                     </div>
                 </div>
                 <div className="flex gap-x-6 mb-3 flex-wrap md:flex-nowrap">
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">Category:</p>
-                        <p>{product.category}</p>
+                        <p>{product.category[1]}</p>
                     </div>
                     <div className="flex gap-x-1">
                         <p className="text-gray-600 dark:text-gray-400">weight:</p>
