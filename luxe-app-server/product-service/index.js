@@ -8,7 +8,7 @@ const Product = require("./models/product");
 const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync.js");
 const dbUrl = process.env.DB_URL;
-const port = process.env.PORT;
+const port = process.env.PORT || 3002;
 
 mongoose.connect(dbUrl);
 
@@ -37,11 +37,12 @@ app.get("/products", async (req, res) => {
 });
 
 app.get("/products/search", async (req, res) => {
-  const {page, category= "all", type= "all"} = req.query;
+  const {page, searchInput, category= "all", type= "all", minPrice = 0, maxPrice= 700} = req.query;
+  console.log(searchInput)
 
   const skip = (page - 1) * pageLimit;
 
-  const product = await Product.find({ category: { $in : [category] }, type: { $in: [type] } }).skip(skip).limit(pageLimit).catch((err) => console.log(err));
+  const product = await Product.find({ category: { $in : [category] }, type: { $in: [type] }, price: {$gte: minPrice, $lte: maxPrice} }).skip(skip).limit(pageLimit).catch((err) => console.log(err));
 
   return res.json(product);
 
@@ -49,7 +50,7 @@ app.get("/products/search", async (req, res) => {
 
 app.get("/products/:productId", async (req, res) => {
   const {productId} = req.params;
-    console.log(productId);
+  console.log(productId);
     
   const product = await Product.findById(productId);
 

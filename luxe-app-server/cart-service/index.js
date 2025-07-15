@@ -12,7 +12,7 @@ const User = require("../shared/database/models/user.js");
 const GuestUser = require("./models/guestUser.js");
 const {v4: uuidv4} = require("uuid");
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3005;
 const app = express();
 
 mongoose.connect(dbUrl);
@@ -50,18 +50,20 @@ const updateCart = (user, item) => {
       return user;
     }
 
-    user.cart.push({ ...item, units: 1 });
+    let newCartItem = { ...item };
+    if(item.units == 0) newCartItem = { ...item, units: 1 };
+
+    user.cart.push(newCartItem);
     return user;
 }
 
 app.put(
   "/shoppingCart/:userId/update",
   catchAsync(async (req, res) => {
-    const { userId } = req.params;
-    console.log(userId);
-    
-
+    const { userId } = req.params;    
     const item = req.body;
+    console.log(item);
+
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User Not Found" });
     const updatedUser = updateCart(user, item)

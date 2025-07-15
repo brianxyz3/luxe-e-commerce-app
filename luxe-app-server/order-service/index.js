@@ -12,7 +12,7 @@ const axios = require("axios");
 
 
 const dbUrl = process.env.DB_URL;
-const port = process.env.PORT;
+const port = process.env.PORT || 5001;
 
 mongoose.connect(dbUrl);
 
@@ -50,8 +50,21 @@ app.post(
       paymentOption,
       totalAmount: Math.floor(totalAmount),
     });
+    
 
     // await newOrder.save();
+
+    axios({
+      method: "PUT",
+      url: `http://localhost:3003/inventory/confirmedOrder/update`,
+      data: { cart: newOrder.cart },
+    });
+
+    axios({
+      method: "POST",
+      url: `http://localhost:5002/notification/orderConfirmation`,
+      data: { ...newOrder, email: user.email, name: user.firstName },
+    });
 
     user.order.push(newOrder._id);
     user.cart = [];
@@ -62,22 +75,6 @@ app.post(
     // await user.save();
     res.status(201).json();
 
-    axios({
-      method: "PUT",
-      url: `http://localhost:7000/inventory/confirmedOrder/update`,
-      data: { cart: newOrder.cart },
-    }).then((response) => {
-      console.log(response);
-    });
-
-
-    axios({
-        method: "POST",
-        url: `http://localhost:5005/notification/orderConfirmation`,
-        data: {...newOrder, email: user.email, name: user.firstName},
-    }).then(response => {
-        console.log(response)
-    });
   })
 )
 

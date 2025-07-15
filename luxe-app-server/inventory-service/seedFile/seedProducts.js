@@ -8,11 +8,12 @@ const Inventory = require("../models/inventory.js");
 
 // Random enum pickers
 const categories = [
-  "skin care",
-  "hair care",
-  "dental care",
-  "facial care",
-  "nail care",
+  "skin-care",
+  "hair-care",
+  "dental-care",
+  "facial-care",
+  "nail-care",
+  "makeup",
   "fragrance",
 ];
 const types = [
@@ -72,11 +73,11 @@ mongoose
     for (let i = 0; i < 100; i++) {
       const newproduct = new Product({
         name: faker.commerce.productName(),
-        category: getRandom(categories),
+        category: ["all", getRandom(categories)],
         brandName: faker.company.name(),
         description: faker.commerce.productDescription(),
-        price: parseFloat(faker.commerce.price(10, 200)),
-        type: getRandom(types),
+        price: parseFloat(faker.commerce.price(10, 120)),
+        type: ["all", getRandom(types)],
       });
 
       const savedP = await newproduct.save();

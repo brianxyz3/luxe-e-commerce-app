@@ -5,11 +5,10 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const mongoose = require("mongoose");
 const Inventory = require("./models/inventory.js");
-const Product = require("./models/product");
 const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync.js");
 const dbUrl = process.env.DB_URL;
-const port = process.env.PORT;
+const port = process.env.PORT || 3003;
 
 mongoose.connect(dbUrl);
 
@@ -31,29 +30,6 @@ app.get("/inventory", async (req, res) => {
   res.json({inventory});
 });
 
-app.get("/products", async (req, res) => {
-  const {page, category} = req.query;
-  
-  const limit = 10
-  const skip = (page - 1) * limit;
-
-  if(category) {
-    const product = await Product.find({category}).limit(limit);
-    return res.json(product);
-  }
-  const product = await Product.find().skip(skip).limit(limit);
-
-  
-  res.json(product);
-});
-
-app.get("/products/:productId", async (req, res) => {
-  const {productId} = req.params;
-
-  const product = await Product.findById(productId);
-
-  res.json(product);
-});
 
 app.put("/inventory/confirmedOrder/update",
   catchAsync(async (req, res) => {

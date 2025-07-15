@@ -27,7 +27,7 @@ db.once("open", () => {
 });
 
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 
@@ -36,14 +36,14 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.post(
-  "/auth/login",
+  "/users/login",
   catchAsync(async (req, res) => {
     try {
       const { email, password, guestId } = req.body;
       const userArr = await User.find({ email });
       
       const user = userArr[0];
-      
+
       const isPassword = await bcrypt
         .compare(password, user.password)
         .catch((err) => console.log("Bcrypt error occurred: " + err));
@@ -53,7 +53,7 @@ app.post(
           if (guestId && guestId != "null") {
             const updateCartResponse = await axios({
               method: "GET",
-              url: `http://localhost:4000/user/login/${guestId}/cart/update`,
+              url: `http://localhost:3005/user/login/${guestId}/cart/update`,
               data: { userCart: user.cart },
             });
 
@@ -77,7 +77,7 @@ app.post(
           if (guestId && guestId != "null") {
             axios({
               method: "DELETE",
-              url: `http://localhost:4000/user/login/${guestId}/delete`,
+              url: `http://localhost:3005/user/login/${guestId}/delete`,
             }).then(({status}) => {
               if(status == 200) console.log(guestId + ", Guest User Delete Successful");
               return;
@@ -96,22 +96,22 @@ app.post(
 );
 
 app.post(
-  "/auth/register",
+  "/users/register",
   catchAsync(async (req, res) => {
     try {
-      const {firstName, lastName, email, password} = req.body;
+      const { firstName, lastName, email, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, hashSaltRounds);
       const newUser = new User({
         firstName,
         lastName,
         email,
         userRole: "admin",
-        password: hashedPassword
+        password: hashedPassword,
       });
-      
+
       const token = generateToken(email);
-      
-      const savedUser = await newUser.save().catch(err => console.log(err))
+
+      const savedUser = await newUser.save().catch((err) => console.log(err));
 
       console.log("saved");
 
@@ -125,40 +125,16 @@ app.post(
       };
       res.status(201).json(data);
     } catch (err) {
-      console.log(`Error occurred in registring new user: ${err}`); 
-      return; 
+      console.log(`Error occurred in registring new user: ${err}`);
+      return;
     }
   })
 );
-// app.post(
-//   "/auth/register/guest",
-//   catchAsync(async (req, res) => {
-//     try {
-//       const {guestId} = req.body;
-      
-//       const newGuest = new GuestUser({
-//         guestId,
-//       });
-      
-      
-//       const savedGuest = await newGuest.save().catch((err) => console.log(err));
 
-//       const data = {
-//         guest: savedGuest,
-//         message: "Guest Registered Successfully",
-//       };
-//       res.status(201).json(data);
-//     } catch (err) {
-//       console.log(`Error occurred in registring new user: ${err}`); 
-//       return; 
-//     }
-//   })
-// );
-
-app.get("/auth/signOut", (req, res) => {
+app.get("/users/signOut", (req, res) => {
   // const token = req.body;
   // expire token
-  res.status(200).json({message: "GoodBye, Come Back Soon."});
+  res.status(200).json({ message: "GoodBye, Come Back Soon." });
 });
 
 

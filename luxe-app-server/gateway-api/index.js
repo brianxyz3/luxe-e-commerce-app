@@ -36,11 +36,11 @@ app.use(
 
 // Proxy to Cart Service
 app.use(
-  "/api/cart",
+  "/api/shoppingCart",
   createProxyMiddleware({
     target: services["cart-service"],
     changeOrigin: true,
-    pathRewrite: { "^/api/cart": "/cart" },
+    pathRewrite: { "^/api/shoppingCart": "/shoppingCart" },
   })
 );
 

@@ -4,6 +4,7 @@ const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync");
 require("dotenv").config();
 
+const port = process.env.PORT || 5002
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -145,4 +146,4 @@ app.post(
   })
 );
 
-app.listen(5005, () => console.log("Server running on port 5005"));
+app.listen(port, () => console.log(`Server running on port- ${port}`));
