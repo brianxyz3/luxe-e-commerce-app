@@ -5,6 +5,7 @@ import MainLayout from "./layouts/MainLayout"
 import ProductDetailsPage from "./pages/ProductDetailsPage"
 import ShoppingCartPage from "./pages/ShoppingCartPage"
 import AuthPage from "./pages/AuthPage"
+import AdminDashboardPage from "./pages/AdminDashboardPage"
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/products/:productId" element={<ProductDetailsPage/>}/>
             <Route path="/shoppingCart" element={<ShoppingCartPage/>}/>
             <Route path="/auth" element={<AuthPage/>}/>
+            <Route path="/admin" element={<AdminDashboardPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
