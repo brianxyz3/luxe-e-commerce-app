@@ -36,17 +36,17 @@ const DashboardChart = () => {
     <div className="h-fit dark:bg-stone-700 overflow-auto">
         <ChartContainer config={chartConfig} className="h-[200px] min-w-[700px] w-full">
             <BarChart accessibilityLayer data={chartData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                dataKey="month"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="sales" fill="var(--color-sales)" radius={2} />
-                <Bar dataKey="users" fill="var(--color-users)" radius={2} />
+              <CartesianGrid vertical={false} />
+              <XAxis
+              dataKey="month"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 3)}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="sales" fill="var(--color-sales)" radius={2} />
+              <Bar dataKey="users" fill="var(--color-users)" radius={2} />
             </BarChart>
         </ChartContainer>
     </div>

@@ -41,7 +41,8 @@ const CartProvider: React.FC<CartProviderType> = ({children}) => {
     const updateLocalStore = (items: CartType[]) => {
       localStorage.setItem("cart", JSON.stringify(items));
       setCart(items);
-      setIsEmpty(false);
+      if(items.length) return setIsEmpty(false);
+      setIsEmpty(true);
     }
 
     const updateCart = async (userId: string, item: CartType) => {

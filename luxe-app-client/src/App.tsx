@@ -1,11 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router"
-import HomePage from "./pages/HomePage"
-import ProductsPage from "./pages/ProductsPage"
+import HomePage from "./pages/userPages/HomePage"
+import ProductsPage from "./pages/userPages/ProductsPage"
 import MainLayout from "./layouts/MainLayout"
-import ProductDetailsPage from "./pages/ProductDetailsPage"
-import ShoppingCartPage from "./pages/ShoppingCartPage"
-import AuthPage from "./pages/AuthPage"
-import AdminDashboardPage from "./pages/AdminDashboardPage"
+import ProductDetailsPage from "./pages/userPages/ProductDetailsPage"
+import ShoppingCartPage from "./pages/userPages/ShoppingCartPage"
+import AuthPage from "./pages/userPages/AuthPage"
+import AdminDashboardPage from "./pages/adminPages/AdminDashboardPage"
+import AdminLayout from "./layouts/AdminLayout"
 
 function App() {
   return (
@@ -19,7 +20,12 @@ function App() {
             <Route path="/products/:productId" element={<ProductDetailsPage/>}/>
             <Route path="/shoppingCart" element={<ShoppingCartPage/>}/>
             <Route path="/auth" element={<AuthPage/>}/>
-            <Route path="/admin" element={<AdminDashboardPage/>}/>
+            <Route element={<AdminLayout/>}>
+              <Route path="/admin/dashboard" element={<AdminDashboardPage/>}/>
+              <Route path="/admin/products" element={<AdminDashboardPage/>}/>
+              <Route path="/admin/orders" element={<AdminDashboardPage/>}/>
+              <Route path="/admin/users" element={<AdminDashboardPage/>}/>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

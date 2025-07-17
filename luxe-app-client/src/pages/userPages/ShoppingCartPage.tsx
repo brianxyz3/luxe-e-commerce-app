@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 
 
 const ShoppingCartPage = () => {
-  const {cart, isEmpty, removeFromCart} = useCart();
+  const {cart, isEmpty, removeFromCart, updateLocalStore} = useCart();
   const navigate = useNavigate();
   const [showOrderOptions, setShowOrderOptions] = useState(false);
   const [formData, setFormData] = useState({paymentOption: "", deliveryAddress: ""})
@@ -30,12 +30,13 @@ const ShoppingCartPage = () => {
     evt.preventDefault();
     axios({
       method: "POST",
-      url: `/api/order/${currentUser.id}`,
+      url: `/api/orders/${currentUser.id}`,
       data: formData,
-    }).then(({status, data, statusText}) => {
+    }).then(({status}) => {
       if (status === 201) {
-        console.log(statusText)
-        // console.log(data.message)
+        updateLocalStore([]);
+        setShowOrderOptions(false)
+        toast.success("Order Confirmed, Thanks For Shopping Luxe.")
       }
     })
   }

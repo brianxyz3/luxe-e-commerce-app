@@ -92,24 +92,24 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
             <Search className="absolute top-2.5 left-3 w-5 h-5 text-gray-500" />
           </div>
         </div>}
-        <div className="flex items-center  text-gray-700 dark:text-white gap-4">
+        <div className="flex items-center  text-gray-700 dark:text-white gap-3 md:gap-4">
           <button
             onClick={() => {
               if(theme == "light") return toggleTheme("dark");
               toggleTheme("light");
             }}
             title="toggle theme" type="button" className="relative">
-            <MoonStar className={`${theme != "dark" && "opacity-0"} size-7 aspect-square duration-300 fixed`}/>
-            <Sun className={`${theme == "dark" && "opacity-0"} size-7 aspect-square duration-300`}/>
+            <MoonStar className={`${theme != "dark" && "opacity-0"} size-5 md:size-7 aspect-square duration-300 fixed`}/>
+            <Sun className={`${theme == "dark" && "opacity-0"} size-5 md:size-7 aspect-square duration-300`}/>
           </button>
           <Link to="/shoppingCart"
             className="relative">
-              {cart.length > 0 && <div className="w-4 aspect-square absolute -top-3 -z-10 right-1 rounded-full font-bold text-sm flex items-center justify-center"><Boxes className="fill-amber-500 dark:stroke-amber-600 dark:fill-transparent"/></div>}
-              <ShoppingCart className="size-7 aspect-square" />
+              {cart.length > 0 && <div className="w-3 md:w-4 aspect-square absolute -top-3 -z-10 right-0.5 md:right-1 rounded-full font-bold text-sm flex items-center justify-center"><Boxes className="fill-amber-500 dark:stroke-amber-600 dark:fill-transparent"/></div>}
+              <ShoppingCart className="size-5 md:size-7 aspect-square" />
           </Link>
-          <Link className={`${userLoggedIn && "hidden"}`} to="/auth"><User className="size-7 aspect-square" /></Link>
-          {/* <Link className={`${!userLoggedIn && "hidden"}`} to="/dashboard"><UserCheck className="size-7 aspect-square" /></Link> */}
-          <button title="Log out" type="button" className={`${!userLoggedIn && "hidden"}`} 
+          <Link className={`${userLoggedIn && "hidden"}`} to="/auth"><User className="size-5 md:size-7 aspect-square" /></Link>
+          <Link className={`${!userLoggedIn && "hidden"}`} to="/dashboard"><UserCheck className="size-5 md:size-7 aspect-square" /></Link>
+          {/* <button title="Log out" type="button" className={`${!userLoggedIn && "hidden"}`} 
           onClick={async () => {
             const {message, status} = await signOut();
             if(status == 200) {
@@ -117,7 +117,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
               toast.success(message);
             }
             if(status != 200) toast.error(message);
-          }}><LogOut className="size-7 aspect-square" /></button>
+          }}><LogOut className="size-5 md:size-7 aspect-square" /></button> */}
         </div>
       </section>
 
