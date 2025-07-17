@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const mongoose = require("mongoose");
 const Inventory = require("./models/inventory.js");
+const Product = require("./models/product.js");
 const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync.js");
 const dbUrl = process.env.DB_URL;
@@ -25,9 +26,16 @@ app.use(cors())
 app.use(express.json())
 
 app.get("/inventory", async (req, res) => {
-  const inventory = await Inventory.find();
-  
-  res.json({inventory});
+  const inventory = await Inventory.find().populate("product");
+  const totalStock = inventory.reduce((total, currValue) => {
+    if (!currValue.units) return total;
+    return total + currValue.units;
+  }, 0)
+  const totalSale = inventory.reduce((total, currValue) => {
+    if (!currValue.units) return total;
+    return total + (currValue.unitsSold * Math.floor(currValue.product.price));
+  }, 0)
+  res.status(200).json({inventory, totalStock, totalSale});
 });
 
 

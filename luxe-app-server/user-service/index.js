@@ -35,6 +35,23 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+app.get(
+  "/users/admin",
+  catchAsync( async (req, res) => {
+    const usersData = await User.find();
+    const users = usersData.map((user) => {
+      return {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        deliveryAddress: user.deliveryAddress,
+        userRole: user.userRole,
+      };
+    });
+    res.status(200).json(users);
+  })
+)
+
 app.post(
   "/users/login",
   catchAsync(async (req, res) => {

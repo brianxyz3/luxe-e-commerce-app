@@ -46,11 +46,11 @@ app.use(
 
 // Proxy to Order Service
 app.use(
-  "/api/order",
+  "/api/orders",
   createProxyMiddleware({
     target: services["order-service"],
     changeOrigin: true,
-    pathRewrite: { "^/api/order": "/order" },
+    pathRewrite: { "^/api/orders": "/orders" },
   })
 );
 

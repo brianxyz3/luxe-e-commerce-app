@@ -27,8 +27,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get(
+  "/orders/admin",
+  catchAsync(async (req, res) => {
+    const orderData = await Order.find().populate("orderBy");
+    const orders = orderData.map((order) => {
+      const normalizedOrder = {...order}      
+      return {...normalizedOrder._doc, orderBy: {email: order.orderBy.email, firstName: order.orderBy.firstName, lastName: order.orderBy.lastName}}
+    })
+    res.status(200).json(orders)
+  })
+)
+
 app.post(
-  "/order/:userId",
+  "/orders/:userId",
   catchAsync(async (req, res) => {
     const {userId} = req.params;
     const {deliveryAddress, paymentOption} = req.body;
@@ -52,7 +64,7 @@ app.post(
     });
     
 
-    // await newOrder.save();
+    await newOrder.save();
 
     axios({
       method: "PUT",
@@ -60,11 +72,11 @@ app.post(
       data: { cart: newOrder.cart },
     });
 
-    axios({
-      method: "POST",
-      url: `http://localhost:5002/notification/orderConfirmation`,
-      data: { ...newOrder, email: user.email, name: user.firstName },
-    });
+    // axios({
+    //   method: "POST",
+    //   url: `http://localhost:5002/notification/orderConfirmation`,
+    //   data: { ...newOrder, email: user.email, name: user.firstName },
+    // });
 
     user.order.push(newOrder._id);
     user.cart = [];
@@ -72,7 +84,7 @@ app.post(
     // console.log(user)
     // console.log(newOrder)
 
-    // await user.save();
+    await user.save();
     res.status(201).json();
 
   })

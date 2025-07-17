@@ -62,7 +62,6 @@ app.put(
   catchAsync(async (req, res) => {
     const { userId } = req.params;    
     const item = req.body;
-    console.log(item);
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User Not Found" });
