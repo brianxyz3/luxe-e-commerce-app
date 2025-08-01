@@ -38,6 +38,14 @@ app.get("/inventory", async (req, res) => {
   res.status(200).json({inventory, totalStock, totalSale});
 });
 
+app.get("/inventory/:inventoryId", async (req, res) => {
+  const {inventoryId} = req.params;
+
+  const inventory = await Inventory.findById(inventoryId).populate("product");
+  
+  res.status(200).json({inventory});
+});
+
 
 app.put("/inventory/confirmedOrder/update",
   catchAsync(async (req, res) => {
@@ -48,9 +56,10 @@ app.put("/inventory/confirmedOrder/update",
         (async function updateInventory () {
           const productInInventory = await Inventory.find({product: product.productId})
           .catch(err => console.log(err))          
-          productInInventory[0].units -= product.units;
-          productInInventory[0].unitsSold += product.units;
-          console.log(productInInventory);
+          if(productInInventory.length) {
+            productInInventory[0].units -= product.units;
+            productInInventory[0].unitsSold += product.units;
+          }
         })()
       }
 
@@ -62,6 +71,28 @@ app.put("/inventory/confirmedOrder/update",
     }
   })
 )
+
+app.put("/inventory/:inventoryId/edit", catchAsync( async (req, res) => {
+  const {inventoryId} = req.params;
+  await Inventory.findByIdAndUpdate(inventoryId, req.body).catch((err) => console.log(err));
+  await Product.findByIdAndUpdate(req.body.product._id, req.body.product).catch((err) => console.log(err));
+  res.status(200).json({ message: "Product Inventory successfully updated" });
+}))
+
+app.put("/inventory/:inventoryId/reStockInventory", catchAsync( async (req, res) => {
+  const {inventoryId} = req.params;
+  await Inventory.findByIdAndUpdate(inventoryId, req.body).catch((err) => console.log(err));
+  res.status(200).json({ message: "Product Inventory successfully re-stocked" });
+}))
+
+app.delete("/inventory/:inventoryId/delete", catchAsync( async (req, res) => {
+  const {inventoryId} = req.params;
+  const deletedInventoryItem = await Inventory.findByIdAndDelete(inventoryId).catch((err) => console.log(err));
+  if(!deletedInventoryItem) return res
+    .status(404)
+    .json({ message: "Product does not exist in inventory" });
+  res.status(200).json({ message: "Product inventory successfully deleted" });
+}))
 
 app.listen(port, () => {
   console.log("Connected and listening on port " + port );
