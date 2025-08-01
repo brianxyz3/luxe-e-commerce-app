@@ -18,7 +18,6 @@ const ProductsPage = () => {
   const [searchQueries, setSearchQueries] = useState({});
   const [filters, setFilters] = useState({category: "all", type: "all", minPrice: 0, maxPrice: 700});
   const [searchInput, setSearchInput] = useState("");
-  const [isGetAll, setIsGetAll] = useState(true);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -34,17 +33,11 @@ const ProductsPage = () => {
 
 
   useEffect(() => {
-    if(search) {
-      setIsGetAll(false)
-    } else {
-      setIsGetAll(true)
-    }
     setSearchQueries({...queryObj})
     setFilters(currValue => ({...currValue, ...queryObj}))
   }, [search])
 
-  const {productList, hasMore} = useProductFetch(isGetAll, pageNumber, searchInput, searchQueries);
-  console.log(queryObj)
+  const {productList, hasMore} = useProductFetch( pageNumber, searchInput, searchQueries);
 
 
   const categories = [
@@ -72,11 +65,9 @@ const ProductsPage = () => {
   ];
 
   const submitFilterOptions = () => {
-    // setSearchQueries(currValue => ({...currValue, ...filters}))
     setPageNumber(1);
-    setIsGetAll(false);
-    navigate(`/products/search?category=${filters.category}&type=${filters.type}&minPrice=${filters.minPrice}&maxPrice=${filters.maxPrice}`)
-    setFilters({category: "all", type: "all", minPrice: 0, maxPrice: 700})
+    navigate(`/products?searchInput=${searchInput}&category=${filters.category}&type=${filters.type}&minPrice=${filters.minPrice}&maxPrice=${filters.maxPrice}`)
+    // setFilters({category: "all", type: "all", minPrice: 0, maxPrice: 700})
     setShowFilterOptions(false)
   }
 
@@ -97,7 +88,7 @@ const ProductsPage = () => {
               <div className={`${showFilterOptions && "rotate-90"} h-1 w-3 dark:bg-white bg-black absolute inset-0 origin-center duration-500`}></div>
               <div className="h-1 w-3 dark:bg-white bg-black absolute inset-0"></div>
             </div>
-            Filters 
+            Filters
         </button>
         <div className="flex flex-col gap-y-2">
           <label className="text-lg tracking-wider font-semibold">Categories</label>
@@ -149,7 +140,9 @@ const ProductsPage = () => {
           <Input
             placeholder="Search for products..."
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => {
+              setSearchInput(e.target.value)
+            }}
             className="rounded-full w-full dark:bg-black dark:text-white"
           />
         </div>
@@ -171,7 +164,7 @@ const ProductsPage = () => {
             className="font-bold text-black dark:text-white dark:bg-cream-darker bg-cream-light">Prev</Button>
             <p className="text-xl font-black">{pageNumber}</p>
             <Button
-            disabled={!hasMore}
+            disabled={!hasMore || productList.length !== 10}
             onClick={() => {
               setPageNumber(prevNum => prevNum + 1)
             }}

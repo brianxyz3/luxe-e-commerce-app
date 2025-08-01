@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 const HomePage = () => {  
-  const {productList, isLoading, error} = useProductFetch(true, 1); 
+  const {productList, isLoading, error} = useProductFetch(1); 
 
   return (
     <>

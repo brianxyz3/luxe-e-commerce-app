@@ -17,7 +17,7 @@ const ShoppingCartPage = () => {
   const navigate = useNavigate();
   const [showOrderOptions, setShowOrderOptions] = useState(false);
   const [formData, setFormData] = useState({paymentOption: "", deliveryAddress: ""})
-  const {productList} = useProductFetch(true, 6)
+  const {productList} = useProductFetch(6)
   const {currentUser, userLoggedIn} = useAuth();
 
   const cartLength = cart.length;

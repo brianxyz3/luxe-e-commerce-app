@@ -40,7 +40,7 @@ const ProductDetailsPage = () => {
 
     
 
-    const {productList} = useProductFetch(true, 1);
+    const {productList} = useProductFetch(1);
 
     const isUnitDifferent = cart.some((item) => item.productId === productId && item.units !== quantity)
     
@@ -143,7 +143,7 @@ const ProductDetailsPage = () => {
                 <div className="flex flex-col gap-y-4">
                     <Button className="rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white">Buy Now</Button>
                     <Button 
-                    className="rounded-sm text-lg border-2 border-black h-12 font-bold bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white"
+                    className="rounded-sm text-lg border-2 border-amber-500 h-12 font-bold bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white"
                     onClick={ async() => {
                     const item: CartType = {
                         productId: product._id,
