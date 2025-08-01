@@ -65,7 +65,7 @@ app.post(
         .compare(password, user.password)
         .catch((err) => console.log("Bcrypt error occurred: " + err));
         if (isPassword) {
-          const token = generateToken(email);
+          const token = generateToken(email, user.userRole);
           
           if (guestId && guestId != "null") {
             const updateCartResponse = await axios({
