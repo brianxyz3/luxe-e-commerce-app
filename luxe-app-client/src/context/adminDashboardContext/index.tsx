@@ -11,7 +11,7 @@ interface AuthProviderType {
   children: ReactNode;
 }
 
-interface InventoryDataType {
+export interface InventoryDataType {
   _id: string;
   product: ProductType;
   units: number;
@@ -27,6 +27,7 @@ interface InventoryType {
 
 interface OrderDataType {
   _id: string;
+  createdAt: string;
   cart: CartType[];
   orderBy: {
     email: string;
@@ -37,7 +38,6 @@ interface OrderDataType {
   status: string;
   deliveryAddress: string;
   paymentOption: string;
-  timestamps: DateConstructor;
 }
 
 interface UserType {
@@ -79,8 +79,6 @@ const AdminDashboardProvider: React.FC<AuthProviderType> = ({children}) => {
           if(inventoryData.status == 500) return toast.error(inventoryData.message)
           if(ordersData.status == 500) return toast.error(ordersData.message)
           if(usersData.status == 500) return toast.error(usersData.message)
-          // console.log(usersData.data)
-          // toast.success()
           setInventory(inventoryData.data);
           setOrders(ordersData.data);
           setUsers(usersData.data)

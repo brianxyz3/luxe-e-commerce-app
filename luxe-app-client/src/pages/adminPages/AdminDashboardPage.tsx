@@ -6,6 +6,7 @@ import { LogOutIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import { signOut } from "@/controller/auth";
 import { useAuth } from "@/context/authContext";
+import { Link, useNavigate } from "react-router";
 
 
 // const recentOrders = [
@@ -17,12 +18,13 @@ import { useAuth } from "@/context/authContext";
 const AdminDashboardPage = () => {
   const { inventory, orders, users } = useAdminDashboard();
   const {handleLogInState} = useAuth();
+  const navigate = useNavigate();
 
   const stats = [
-    { label: "Total Users", value: users.length + 346 },
-    { label: "Total Products", value: inventory.totalStock },
-    { label: "Total Orders", value: orders.length +1814 },
-    { label: "Revenue", value: `₦ ${inventory.totalSale}` },
+    { label: "Total Users", value: users.length + 346, link: "/admin/users"},
+    { label: "Total Products", value: inventory.totalStock, link: "/admin/inventory"},
+    { label: "Total Orders", value: orders.length +1814, link: "/admin/orders"},
+    { label: "Revenue", value: `₦ ${inventory.totalSale}`, link: "/admin/dashboard"},
   ];
 
   const recentOrders = orders.reverse().slice(0, 3)
@@ -30,7 +32,7 @@ const AdminDashboardPage = () => {
   return (
     <>
       {/* Main content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 bg-cream-light p-6">
         {/* Header */}
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Dashboard Overview</h1>
@@ -47,22 +49,24 @@ const AdminDashboardPage = () => {
         </header>
 
         {/* Stats */}
-        <section className="grid md:grid-rows-2 gap-8 mb-10">
+        <section className="grid md:grid-rows-2 items-center gap-8 mb-10">
           <div className="h-fit grid grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
-              <Card key={index} className={`${index == 0 && "bg-gradient-to-tr from-amber-200 via-amber-600 to-black dark:from-black dark:via-stone-900 dark:to-amber-600"} dark:bg-black shadow rounded-xl`}>
-                <CardContent className="p-4">
-                  <h5 className="text- dark:text-gray-400  text-gray-600">{stat.label}</h5>
-                  <h3 className="text-xl font-bold">{stat.value}</h3>
-                </CardContent>
-              </Card>
+              <Link to={stat.link} key={index} className="h-fit">
+                <Card className={`${index == 0 && "bg-gradient-to-tr from-amber-200 via-amber-600 to-black dark:from-black dark:via-stone-900 dark:to-amber-600"} dark:bg-black shadow rounded-xl`}>
+                  <CardContent className="p-4">
+                    <h5 className="text- dark:text-gray-400  text-gray-600">{stat.label}</h5>
+                    <h3 className="text-xl font-bold">{stat.value}</h3>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
           <DashboardChart/>
         </section>
 
         {/* Recent Orders */}
-        <section className="grid grid-cols-1 overflow-auto dark:bg-black shadow rounded-xl p-6">
+        <section className="bg-cream-lighter grid grid-cols-1 overflow-auto dark:bg-black shadow rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-2">Recent Orders</h2>
           <table className="min-w-[350px] w-full text-sm">
             <thead>
@@ -75,7 +79,8 @@ const AdminDashboardPage = () => {
             </thead>
             <tbody>
               {recentOrders.map((order, idx) => (
-                <tr key={idx} className="border-b hover:bg-gray-100">
+                <tr key={idx} className="border-b hover:bg-gray-100"
+                onClick={() => navigate(`/order/admin/${order._id}`)}>
                   <td className="py-2 truncate max-w-5">{order._id}</td>
                   <td className="max-w-24 sm:max-w-fit truncate">{order.orderBy.firstName + " " + order.orderBy.lastName}</td>
                   <td>₦ {order.totalAmount}</td>
