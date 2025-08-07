@@ -1,17 +1,10 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useAuth } from './authContext';
+import type { CartType } from '@/types';
 
 interface CartProviderType {
   children: ReactNode;
-}
-
-export interface CartType {
-  productId: string;
-  productName: string;
-  productBrandName: string;
-  price: number;
-  units: number;
 }
 
 const CartContext = createContext<{cart: CartType[]; isEmpty: boolean; updateLocalStore: (items: CartType[]) => void; updateCart: (userId: string, cart: CartType) => Promise<{status: number; message: any}>; removeFromCart: (userId: string, itemId: string) => Promise<{status: number; message: any}>} | undefined>(undefined);

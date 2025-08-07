@@ -6,7 +6,7 @@ const fetchInventoryList = async () => {
         return { data, status };
     } catch (error) {
         console.log(error);
-        return {status: 500, message: "an error occured"}
+        return {status: 500, message: "an error occured in getting inventory details"}
     }
 }
 

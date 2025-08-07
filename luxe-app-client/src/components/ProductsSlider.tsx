@@ -1,6 +1,6 @@
 import React from "react"
 import ProductCard from "./ProductCard";
-import type { ProductType } from "@/controller/useProductFetch";
+import type { ProductType } from "@/types";
 
 interface ProductsSliderProps {
   heading: string;

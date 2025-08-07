@@ -1,60 +1,54 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import axios from "axios";
+import { useEffect, useState, useCallback } from "react"
+import debounce from "lodash.debounce";
+import type { ProductType } from "@/types";
 
-export interface ProductType {
-    _id: string;
-    name: string;
-    category: string[];
-    brandName: string;
-    description: string;
-    type: string[];
-    price: number;
-}
-
-function useProductFetch(isGetAll: boolean, pageNumber: number, searchInput?:string,  searchFilter?: Record<string, string>) {
+function useProductFetch( pageNumber: number, searchInput?:string,  searchFilter?: Record<string, string>) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(true);
-    const [hasMore, setHasMore] = useState(true);
+    const [totalNumOfPages, setTotalNumOfPages] = useState(0);
     const [productList, setProductList] = useState<ProductType[] | undefined>([]);
 
-    let apiUrl;
-    if (isGetAll) {
-        apiUrl = "/api/products";
-    } else {
-        apiUrl = "/api/products/search";
-    }
+    let apiUrl = "/api/products";
+
+    const fetchProducts = useCallback(
+        debounce(async (pageNumber: number, searchInput: string | undefined, searchFilter: Record<string, string> | undefined) => {
+            setIsLoading(true);
+            setError(false);
+            let cancel: () => void
+            axios.get(
+                apiUrl,
+                {
+                    params: {
+                        page: pageNumber,
+                        ...searchFilter,
+                        searchInput
+                    },
+                    cancelToken: new axios.CancelToken(c => cancel = c)
+                }).then(({data}) => {
+                    if (data.products.length > 0) {
+                        setProductList([...data.products]);
+                        setTotalNumOfPages(data.totalPages);
+                    } else {
+                        setProductList(undefined);
+                    }
+                }).catch(err => {
+                    if (axios.isCancel(err)) return;
+                    console.log("error occured" + err)
+                    setError(true)
+                })
+            setIsLoading(false);
+            return () => cancel()
+        }, 500), []
+    )
 
 
     useEffect(() => {
-        setIsLoading(true);
-        setError(false);
-        let cancel: () => void
-        axios.get(
-            apiUrl,
-            {
-            params: {
-                page: pageNumber,
-                ...searchFilter,
-                searchInput
-            },
-            cancelToken: new axios.CancelToken(c => cancel = c)
-        }).then(response => {
-            if (response.data.length > 0) {
-                setProductList([...response.data]);
-            } else {
-                setProductList(undefined);
-            }
-            setHasMore(response.data.length > 0);
-            setIsLoading(false);
-        }).catch(err => {
-            if(axios.isCancel(err)) return;
-            console.log("error occured" + err)
-            setError(true)
-        })
-        return () => cancel()
-    }, [pageNumber, searchInput, searchFilter])
+        fetchProducts(pageNumber, searchInput, searchFilter);
+        return fetchProducts.cancel;
+    }, [pageNumber, searchInput, searchFilter, fetchProducts])
 
-  return {productList, isLoading, error, hasMore}
+  return {productList, isLoading, error, totalNumOfPages}
 }
 
 export default useProductFetch

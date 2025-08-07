@@ -2,56 +2,12 @@ import { fetchInventoryList } from "@/controller/inventoryFetch";
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../authContext";
-import type { ProductType } from "@/controller/useProductFetch";
-import type { CartType } from "../cartContext";
 import { fetchOrderList } from "@/controller/orderFetch";
 import { fetchUserList } from "@/controller/userFetch";
+import type { DashboardContextType } from "@/types";
 
 interface AuthProviderType {
   children: ReactNode;
-}
-
-export interface InventoryDataType {
-  _id: string;
-  product: ProductType;
-  units: number;
-  unitsSold: number;
-}
-
-interface InventoryType {
-  inventoryList: InventoryDataType[];
-  totalStock: number;
-  totalSale: number;
-}
-
-
-interface OrderDataType {
-  _id: string;
-  createdAt: string;
-  cart: CartType[];
-  orderBy: {
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-  totalAmount: number;
-  status: string;
-  deliveryAddress: string;
-  paymentOption: string;
-}
-
-interface UserType {
-  email: string;
-  firstName: string;
-  lastName: string;
-  deliveryAddress: string;
-  userRole: string;
-}
-
-interface DashboardContextType {
-  inventory: InventoryType;
-  orders: OrderDataType[];
-  users : UserType[];
 }
 
 
@@ -76,12 +32,21 @@ const AdminDashboardProvider: React.FC<AuthProviderType> = ({children}) => {
           const inventoryData = await fetchInventoryList();
           const ordersData = await fetchOrderList();
           const usersData = await fetchUserList();
-          if(inventoryData.status == 500) return toast.error(inventoryData.message)
-          if(ordersData.status == 500) return toast.error(ordersData.message)
-          if(usersData.status == 500) return toast.error(usersData.message)
-          setInventory(inventoryData.data);
-          setOrders(ordersData.data);
-          setUsers(usersData.data)
+          if(inventoryData.status == 500) {
+            toast.error(inventoryData.message)
+          } else {
+            setInventory(inventoryData.data);
+          }
+          if(ordersData.status == 500) {
+            toast.error(ordersData.message)
+          } else {
+            setOrders(ordersData.data);
+          }
+          if(usersData.status == 500) {
+            toast.error(usersData.message)
+          } else {
+            setUsers(usersData.data)
+          }
         } catch (error) {
           console.log(error)
         }
