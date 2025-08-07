@@ -27,12 +27,13 @@ app.use(express.json())
 
 app.get("/inventory", async (req, res) => {
   const inventory = await Inventory.find().populate("product");
-  const totalStock = inventory.reduce((total, currValue) => {
-    if (!currValue.product.units) return total;
-    return total + currValue.product.units;
+  inventory.sort((a, b) => a.product.units - b.product.units);
+  const totalStock = inventory.reduce((total, currInventory) => {
+    if (!currInventory.product.units) return total;
+    return total + currInventory.product.units;
   }, 0);
-  const totalSale = inventory.reduce((total, currValue) => {
-    return total + ( currValue.unitsSold * Math.floor(currValue.product.price) );
+  const totalSale = inventory.reduce((total, currInventory) => {
+    return total + ( currInventory.unitsSold * Math.floor(currInventory.product.price) );
   }, 0);
   res.status(200).json({ inventory, totalStock, totalSale });
 });

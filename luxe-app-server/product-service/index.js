@@ -53,7 +53,6 @@ app.get("/products", async (req, res) => {
 
 app.get("/products/:productId", async (req, res) => {
   const {productId} = req.params;
-  console.log(productId);
     
   const product = await Product.findById(productId);
   res.json(product);

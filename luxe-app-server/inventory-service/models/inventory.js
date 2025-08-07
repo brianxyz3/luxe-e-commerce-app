@@ -7,6 +7,7 @@ const InventorySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Product"
   },
+  costPrice: Number,
   unitsSold: Number
 });
 
