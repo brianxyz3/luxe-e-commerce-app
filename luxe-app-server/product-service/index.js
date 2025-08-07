@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const Product = require("./models/product");
 const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync.js");
-const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/luxe";
 const port = process.env.PORT || 3002;
 
 mongoose.connect(dbUrl);
@@ -24,28 +24,30 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 
-const pageLimit = 10;
+const pageLimit = 9;
 
 app.get("/products", async (req, res) => {
-  const {page} = req.query;
-  
-  const skip = (page - 1) * pageLimit;
-  
-  const product = await Product.find().skip(skip).limit(pageLimit);
-
-  res.json(product);
-});
-
-app.get("/products/search", async (req, res) => {
-  const {page, searchInput, category= "all", type= "all", minPrice = 0, maxPrice= 700} = req.query;
-  console.log(searchInput)
+  const {page, searchInput, category= "all", type= "all", minPrice = 0, maxPrice= 1000} = req.query;
+  let userInput = {};
+  if (searchInput) userInput.name = { $regex: searchInput, $options: "i" };
 
   const skip = (page - 1) * pageLimit;
 
-  const product = await Product.find({ category: { $in : [category] }, type: { $in: [type] }, price: {$gte: minPrice, $lte: maxPrice} }).skip(skip).limit(pageLimit).catch((err) => console.log(err));
+  const filterQuery = {
+    ...userInput,
+    category: { $in: [category] },
+    type: { $in: [type] },
+    price: { $gte: minPrice, $lte: maxPrice },
+  };
 
-  return res.json(product);
+  const numOfPages = await Product.countDocuments(filterQuery).catch((err) =>
+    console.log(err)
+  );
+  const products = await Product.find(filterQuery).skip(skip).limit(pageLimit).catch((err) => console.log(err));
 
+  const totalPages = Math.ceil(numOfPages / pageLimit);
+
+  return res.json({products, totalPages});
 });
 
 app.get("/products/:productId", async (req, res) => {

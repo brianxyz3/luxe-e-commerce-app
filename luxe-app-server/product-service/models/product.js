@@ -19,6 +19,7 @@ const ProductSchema = new Schema({
   }],
   brandName: String,
   description: String,
+  units: Number,
   price: Number,
   type: [{
     type: String,

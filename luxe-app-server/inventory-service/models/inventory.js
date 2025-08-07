@@ -7,7 +7,6 @@ const InventorySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Product"
   },
-  units: Number,
   unitsSold: Number
 });
 

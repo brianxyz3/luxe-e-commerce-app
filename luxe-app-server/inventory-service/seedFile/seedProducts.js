@@ -66,17 +66,18 @@ mongoose
 
 
   const seedDB = async() => {
-    await Product.deleteMany({}); // optional: clear old products
-    await Inventory.deleteMany({}); // optional: clear old products
+    await Product.deleteMany({}); // clear old products
+    await Inventory.deleteMany({}); // clear old products
 
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 60; i++) {
       const newproduct = new Product({
         name: faker.commerce.productName(),
         category: ["all", getRandom(categories)],
         brandName: faker.company.name(),
         description: faker.commerce.productDescription(),
         price: parseFloat(faker.commerce.price(10, 120)),
+        units: Math.floor(Math.random() * 70),
         type: ["all", getRandom(types)],
       });
 
@@ -84,7 +85,6 @@ mongoose
 
       const inventory = new Inventory({
         product: savedP._id,
-        units: Math.floor(Math.random() * 70),
         unitsSold: Math.floor(Math.random() * 40),
       });
 

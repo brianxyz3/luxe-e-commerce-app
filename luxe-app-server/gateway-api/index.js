@@ -1,7 +1,9 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const rateLimit = require("express-rate-limit");
-// const verifyToken = require("./utils/auth");
 const services = require("./services");
 
 const app = express();
@@ -12,7 +14,7 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per window
   message: { error: "Too many requests, try again later." },
 });
-app.use(limiter);
+// app.use(limiter);
 
 // Proxy to User Service
 app.use(
@@ -21,7 +23,7 @@ app.use(
     target: services["user-service"],
     changeOrigin: true,
     pathRewrite: { "^/api/users": "/users" },
-  }),
+  })
 );
 
 // Proxy to Product Service

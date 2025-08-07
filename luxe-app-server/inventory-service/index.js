@@ -8,7 +8,7 @@ const Inventory = require("./models/inventory.js");
 const Product = require("./models/product.js");
 const cors = require("cors");
 const catchAsync = require("../shared/utlis/catchAsync.js");
-const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/luxe";
 const port = process.env.PORT || 3003;
 
 mongoose.connect(dbUrl);
@@ -28,14 +28,13 @@ app.use(express.json())
 app.get("/inventory", async (req, res) => {
   const inventory = await Inventory.find().populate("product");
   const totalStock = inventory.reduce((total, currValue) => {
-    if (!currValue.units) return total;
-    return total + currValue.units;
-  }, 0)
+    if (!currValue.product.units) return total;
+    return total + currValue.product.units;
+  }, 0);
   const totalSale = inventory.reduce((total, currValue) => {
-    if (!currValue.units) return total;
-    return total + (currValue.unitsSold * Math.floor(currValue.product.price));
-  }, 0)
-  res.status(200).json({inventory, totalStock, totalSale});
+    return total + ( currValue.unitsSold * Math.floor(currValue.product.price) );
+  }, 0);
+  res.status(200).json({ inventory, totalStock, totalSale });
 });
 
 app.get("/inventory/:inventoryId", async (req, res) => {
@@ -53,14 +52,12 @@ app.put("/inventory/confirmedOrder/update",
       const {cart} = req.body;
 
       for (const product of cart) {
-        (async function updateInventory () {
-          const productInInventory = await Inventory.find({product: product.productId})
-          .catch(err => console.log(err))          
-          if(productInInventory.length) {
-            productInInventory[0].units -= product.units;
-            productInInventory[0].unitsSold += product.units;
-          }
-        })()
+        const productInInventory = await Inventory.find({product: product.productId})
+        .catch(err => console.log(err))          
+        if(productInInventory.length) {
+          productInInventory[0].product.units -= product.units;
+          productInInventory[0].unitsSold += product.units;
+        }
       }
 
       res.status(200).json();
@@ -79,11 +76,18 @@ app.put("/inventory/:inventoryId/edit", catchAsync( async (req, res) => {
   res.status(200).json({ message: "Product Inventory successfully updated" });
 }))
 
-app.put("/inventory/:inventoryId/reStockInventory", catchAsync( async (req, res) => {
-  const {inventoryId} = req.params;
-  await Inventory.findByIdAndUpdate(inventoryId, req.body).catch((err) => console.log(err));
-  res.status(200).json({ message: "Product Inventory successfully re-stocked" });
-}))
+app.put(
+  "/inventory/:productId/reStockInventory",
+  catchAsync(async (req, res) => {
+    const { productId } = req.params;
+    await Product.findByIdAndUpdate(productId, req.body).catch((err) =>
+      console.log(err)
+    );
+    res
+      .status(200)
+      .json({ message: "Product Inventory successfully re-stocked" });
+  })
+);
 
 app.delete("/inventory/:inventoryId/delete", catchAsync( async (req, res) => {
   const {inventoryId} = req.params;
@@ -91,6 +95,9 @@ app.delete("/inventory/:inventoryId/delete", catchAsync( async (req, res) => {
   if(!deletedInventoryItem) return res
     .status(404)
     .json({ message: "Product does not exist in inventory" });
+  const product = await Product.findByIdAndUpdate(deletedInventoryItem, {
+    units: -10,
+  }).catch((err) => console.log(err)); // negative product units means product has was deleted from inventory
   res.status(200).json({ message: "Product inventory successfully deleted" });
 }))
 

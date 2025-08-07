@@ -15,7 +15,7 @@ const generateToken = require("./utils/generateToken.js");
 
 const mongoose = require("mongoose");
 
-const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/luxe";
 
 mongoose.connect(dbUrl);
 
@@ -64,6 +64,7 @@ app.post(
       const isPassword = await bcrypt
         .compare(password, user.password)
         .catch((err) => console.log("Bcrypt error occurred: " + err));
+
         if (isPassword) {
           const token = generateToken(email, user.userRole);
           
