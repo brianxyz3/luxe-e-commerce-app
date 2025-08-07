@@ -7,6 +7,10 @@ import ShoppingCartPage from "./pages/userPages/ShoppingCartPage"
 import AuthPage from "./pages/userPages/AuthPage"
 import AdminDashboardPage from "./pages/adminPages/AdminDashboardPage"
 import AdminLayout from "./layouts/AdminLayout"
+import AdminInventoryPage from "./pages/adminPages/AdminInventoryPage"
+import AdminInventoryDetailsPage from "./pages/adminPages/AdminInventoryDetailsPage"
+import AdminEditInventoryPage from "./pages/adminPages/AdminEditInventoryPage"
+import AdminOrderHistoryPage from "./pages/adminPages/AdminOrderHistoryPage"
 
 function App() {
   return (
@@ -16,14 +20,16 @@ function App() {
           <Route path="/" element={<HomePage/>}/>
 
           <Route element={<MainLayout/>}>
-            <Route path="/products/search?" element={<ProductsPage/>}/>
+            <Route path="/products?" element={<ProductsPage/>}/>
             <Route path="/products/:productId" element={<ProductDetailsPage/>}/>
             <Route path="/shoppingCart" element={<ShoppingCartPage/>}/>
             <Route path="/auth" element={<AuthPage/>}/>
             <Route element={<AdminLayout/>}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage/>}/>
-              <Route path="/admin/products" element={<AdminDashboardPage/>}/>
-              <Route path="/admin/orders" element={<AdminDashboardPage/>}/>
+              <Route path="/admin/inventory" element={<AdminInventoryPage/>}/>
+              <Route path="/admin/inventory/:inventoryId" element={<AdminInventoryDetailsPage/>}/>
+              <Route path="/admin/inventory/:inventoryId/edit" element={<AdminEditInventoryPage/>}/>
+              <Route path="/admin/orders" element={<AdminOrderHistoryPage/>}/>
               <Route path="/admin/users" element={<AdminDashboardPage/>}/>
             </Route>
           </Route>

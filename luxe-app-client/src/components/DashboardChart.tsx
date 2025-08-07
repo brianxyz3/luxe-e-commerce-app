@@ -33,7 +33,7 @@ const DashboardChart = () => {
       ]
 
   return (
-    <div className="h-fit dark:bg-stone-700 overflow-auto">
+    <div className="h-fit dark:bg-stone-600/80 overflow-auto">
         <ChartContainer config={chartConfig} className="h-[200px] min-w-[700px] w-full">
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />

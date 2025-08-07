@@ -67,13 +67,13 @@ const HomePage = () => {
         </section>
 
         {/* All Products */}
-        <section className="">
-          <div className="flex justify-between text-gray-800 dark:bg-black dark:text-white">
-            <p className="px-3 md:px-6 py-1.5 tracking-wider font-black">All Products</p>
+        <section className="bg-cream-lighter dark:bg-stone-700">
+          <div className="flex justify-between bg-cream-light text-gray-800 dark:bg-black dark:text-white">
+            <Link to="/products" className="px-3 md:px-6 py-1.5 tracking-wider font-black">All Products</Link>
           </div>
           {/* <div className="flex flex-wrap justify-evenly shrink-0 gap-6 py-6 bg-white dark:bg-stone-700"> */}
           { productList? 
-            <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-3 sm:gap-6 py-6 px-2 md:px-6 bg-white dark:bg-stone-700">
+            <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-3 sm:gap-6 py-6 px-2 md:px-6 lg:w-5/6 mx-auto">
               {productList.map((product) => (
                 <ProductCard key={product._id} variant="default" product={product}/>
               ))}
