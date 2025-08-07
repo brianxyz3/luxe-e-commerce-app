@@ -32,7 +32,7 @@ const AdminDashboardPage = () => {
   return (
     <>
       {/* Main content */}
-      <main className="flex-1 bg-cream-light p-6">
+      <main className="flex-1 bg-cream-light dark:bg-stone-700 p-6">
         {/* Header */}
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold">Dashboard Overview</h1>

@@ -1,8 +1,9 @@
 import { heroModelImg, productImg1, productImg2, productImg3, productImg4 } from "@/assets/images"
+import AvailableUnitTag from "@/components/AvailableUnitTag"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { InventoryDataType } from "@/context/adminDashboardContext"
 import { useAuth } from "@/context/authContext"
+import type { InventoryDataType } from "@/types"
 import axios from "axios"
 import { Star } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -23,7 +24,7 @@ const AdminInventoryDetailsPage = () => {
     useEffect(() => {
         axios.get(`/api/inventory/${inventoryId}`).then(({data}) => {
             setInventory(data.inventory)
-            setStock(data.inventory.units)
+            setStock(data.inventory.product.units)
         })
     }, [inventoryId]);
 
@@ -49,11 +50,13 @@ const AdminInventoryDetailsPage = () => {
   return (
     <main className="flex-1 px-2 sm:px-6 lg:px-12 py-6 bg-cream-light dark:bg-black">
         {/* Full Product Detail */}
-        <section className="bg-white dark:bg-stone-700 px-3 py-6 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-y-12 lg:gap-8 mb-8">
+        {inventory && <> <section className="bg-white dark:bg-stone-700 px-3 py-6 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-y-12 lg:gap-8 mb-8">
             <div className="w-full lg:col-span-1 place-self-center h-full">
 
                 {/* Product Image(s) */}
-                <div className="">
+                <div className="relative">
+                    {inventory.product.units <= 0 && <div className="absolute w-5/6 h-full bg-gray-200/25 flex justify-self-center items-center justify-center"><h3 className="font-semibold text-4xl truncate text-red-600/90 origin-center">OUT OF STOCK</h3></div>}
+                    <AvailableUnitTag units={inventory.product.units}/>
                     <img src={heroModelImg} className="w-60 mx-auto" alt="" />
                     <div className="flex gap-2 md:gap-3 mt-4 h-20 w-4/5 md:w-3/5 lg:w-full mx-auto overflow-x-auto flex-nowrap">
                         <img src={productImg4} className="min-w-20" alt="" />
@@ -100,7 +103,7 @@ const AdminInventoryDetailsPage = () => {
                     </div>
                 </div>
                 <div className="flex gap-x-6 font-bold text-gray-700 dark:text-gray-500">
-                    <p>Available Units: <span className="font-normal text-black dark:text-white">{inventory?.units}</span></p>
+                    <p>Available Units: <span className="font-normal text-black dark:text-white">{inventory?.product.units}</span></p>
                     <p>Sold Units: <span className="font-normal text-black dark:text-white">{inventory?.unitsSold}</span></p>
                 </div>
                 <div className="flex items-center my-3"><Star/> 4.9 Ratings * 2.3+ Reviews</div>
@@ -136,11 +139,11 @@ const AdminInventoryDetailsPage = () => {
                     <Button variant={"default"}
                     className={`${showReStockInput ? "w-20 truncate" : "w-44"} origin-right transition-all duration-500 overflow-hidden`}
                     onClick={() => {
-                        if(showReStockInput && stock != inventory?.units) {
+                        if(showReStockInput && stock != inventory?.product.units) {
                             if(stock >= 0) {
                                 axios({
                                     method: "PUT",
-                                    url: `/api/inventory/${inventoryId}/reStockInventory`,
+                                    url: `/api/inventory/${inventory?.product._id}/reStockProduct`,
                                     headers: {"auth": `Bearer- ${currentUser.token}`},
                                     data: {units: stock}
                                 }).then(({data}) => {
@@ -229,7 +232,7 @@ const AdminInventoryDetailsPage = () => {
                     }
                 </div>
             </div>
-        </section>
+        </section></>}
     </main>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useProductFetch from "@/controller/useProductFetch";
@@ -7,19 +7,13 @@ import { useLocation, useNavigate } from "react-router";
 import { Slider } from "@/components/ui/slider";
 
 
-  // const filteredProducts = productList.filter((product) => {
-  //   const normalizedSelectedType = selectedType.toLocaleLowerCase();
-  //   const matchType = normalizedSelectedType === "all" || product.type === normalizedSelectedType;
-  //   const matchSearch = product.name.toLowerCase().includes(searchQueries.toLowerCase());
-  //   return matchType && matchSearch;
-  // });
 
 const ProductsPage = () => {
   const [searchQueries, setSearchQueries] = useState({});
   const [filters, setFilters] = useState({category: "all", type: "all", minPrice: 0, maxPrice: 700});
   const [searchInput, setSearchInput] = useState("");
   const [showFilterOptions, setShowFilterOptions] = useState(false);
-  const [pageNumber, setPageNumber] = useState(1);
+  const pageNumber = useRef(1);
 
   const navigate = useNavigate();
   const {search} = useLocation();
@@ -34,11 +28,11 @@ const ProductsPage = () => {
 
   useEffect(() => {
     setSearchQueries({...queryObj})
+    if(queryObj.page) pageNumber.current = parseInt(queryObj.page);
     setFilters(currValue => ({...currValue, ...queryObj}))
   }, [search])
 
-  const {productList, hasMore} = useProductFetch( pageNumber, searchInput, searchQueries);
-
+  const {productList, totalNumOfPages} = useProductFetch( pageNumber.current, searchInput, searchQueries);
 
   const categories = [
     "all",
@@ -65,9 +59,8 @@ const ProductsPage = () => {
   ];
 
   const submitFilterOptions = () => {
-    setPageNumber(1);
+    pageNumber.current = 1;
     navigate(`/products?searchInput=${searchInput}&category=${filters.category}&type=${filters.type}&minPrice=${filters.minPrice}&maxPrice=${filters.maxPrice}`)
-    // setFilters({category: "all", type: "all", minPrice: 0, maxPrice: 700})
     setShowFilterOptions(false)
   }
 
@@ -124,7 +117,7 @@ const ProductsPage = () => {
           </div>
           <Slider className="mb-4" name="price" value={[filters.minPrice, filters.maxPrice]} max={700} step={1} onValueChange={(value: number[]) => setFilters(currValue => ({...currValue, minPrice: value[0], maxPrice: value[1]}))} />
           
-          <Button onClick={handleFilterReset} type="button" className="bg-cream-darker dark:bg-cream-light font-bold text-lg tracking-wide">
+          <Button onClick={handleFilterReset} type="button" className="bg-cream-darker mb-1 dark:bg-stone-800 font-bold text-lg tracking-wide">
             Reset
           </Button>
           <Button onClick={submitFilterOptions} type="button" className="font-bold text-lg tracking-wide">
@@ -157,16 +150,18 @@ const ProductsPage = () => {
           </div>
           <div className="flex mx-auto w-fit items-center gap-4 my-4">
             <Button
-            disabled={pageNumber <= 1}
+            disabled={pageNumber.current <= 1}
             onClick={() => {
-              setPageNumber(prevNum => prevNum - 1)
+              pageNumber.current = Math.min(pageNumber.current - 1, totalNumOfPages)
+              navigate(`/products?page=${pageNumber.current}`)
             }}
             className="font-bold text-black dark:text-white dark:bg-cream-darker bg-cream-light">Prev</Button>
-            <p className="text-xl font-black">{pageNumber}</p>
+            <p className="text-xl font-black">{pageNumber.current}</p>
             <Button
-            disabled={!hasMore || productList.length !== 10}
+            disabled={pageNumber.current === totalNumOfPages}
             onClick={() => {
-              setPageNumber(prevNum => prevNum + 1)
+              pageNumber.current = Math.min(pageNumber.current + 1, totalNumOfPages)
+              navigate(`/products?page=${pageNumber.current}`)
             }}
             className="font-bold text-black dark:text-white dark:bg-cream-darker bg-cream-light">Next</Button>
           </div>

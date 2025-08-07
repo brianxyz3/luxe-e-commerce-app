@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { productImg1 } from "@/assets/images";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
-import type { InventoryDataType } from "@/context/adminDashboardContext";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/authContext";
+import { ArrowDown01, ArrowUp10 } from "lucide-react";
+import type { InventoryDataType } from "@/types";
 
 
 
@@ -14,18 +15,19 @@ const AdminInventoryPage = () => {
   const [search, setSearch] = useState("");
   const {currentUser} = useAuth();
   const navigate = useNavigate();
-  const [inventory, setInventory] = useState<InventoryDataType[]>([]);
+  const inventory = useRef<InventoryDataType[]>([]);
+  const [isDescUnitSort, setIsDescUnitSort] = useState(false);
   const [filteredInventory, setFilteredInventory] = useState<InventoryDataType[] | undefined>([]);
 
   useEffect(() => {
-    if(inventory.length == 0) fetchProducts();
+    if(inventory.current.length == 0) fetchProducts();
     filterUsingKeyword()
   }, [search]);
 
   const fetchProducts = async () => {
     try {
       const { data } = await axios.get("/api/inventory");
-      setInventory(data.inventory);
+      inventory.current = data.inventory;
       setFilteredInventory(data.inventory);
     } catch (err) {
       console.error("Error fetching inventory", err);
@@ -34,13 +36,13 @@ const AdminInventoryPage = () => {
 
   const filterUsingKeyword = () => {
     if(search.length >= 1) {
-      const searchResult = inventory.filter((item) => (
+      const searchResult = inventory.current.filter((item) => (
         item.product.name.toLowerCase().includes(search.toLowerCase())
       ))
     if(searchResult?.length !== 0) return setFilteredInventory(searchResult)
     setFilteredInventory(undefined)
   } else {
-      setFilteredInventory(inventory)
+    setFilteredInventory(inventory.current)
   }
   }
   const handleDelete = async (inventoryId: string) => {
@@ -66,7 +68,18 @@ const AdminInventoryPage = () => {
 
   return (
     <main className="bg-cream-light dark:bg-stone-700 p-6 min-h-screen w-full">
-      <h1 className="text-2xl font-bold mb-4">All Products</h1>
+      <div className="flex items-baseline-last justify-between">
+        <h1 className="text-2xl font-bold mb-4">All Products</h1>
+        <button type="button"
+        onClick={() => {
+          setFilteredInventory(currValue => {
+            if(currValue) return [...currValue].reverse()
+            return currValue;
+          })
+          setIsDescUnitSort(currValue => !currValue)
+        }}
+        className="flex gap-1 py-0.5 px-1.5 text-sm font-semibold h-fit rounded-full bg-amber-600">Sort by units {isDescUnitSort ? <ArrowUp10 className="size-5"/> : <ArrowDown01 className="size-5"/> }</button>
+      </div>
 
       <div className="mb-4 items-center">
         <Input
@@ -100,7 +113,7 @@ const AdminInventoryPage = () => {
 
             <div className="flex mt-4 items-center justify-between">
               <div>
-                Units: <b>{inventoryItem.units}</b>
+                Units: <b>{inventoryItem.product.units}</b>
               </div>
               <div className="flex gap-2">
                 <Link to={`/admin/inventory/${inventoryItem._id}/edit`}>
@@ -122,25 +135,6 @@ const AdminInventoryPage = () => {
         ))
         : <div className="text-lg font-semibold tracking-wide mt-20">No Item Found</div>
     }
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2">
-        {/* <button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          disabled={page === 1}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Prev
-        </button> */}
-        {/* <span className="px-3 py-1">{page} / {totalPages}</span> */}
-        {/* <button
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-          disabled={page === totalPages}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Next
-        </button> */}
       </div>
     </main>
   );

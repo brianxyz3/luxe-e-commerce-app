@@ -3,15 +3,16 @@ import React from "react"
 
 interface ButtonProps {
   quantity: number;
+  availableUnits: number;
   plusQuantity: () => void;
   minusQuantity: () => void;
 }
-const PlusMinusButton: React.FC<ButtonProps> = ({quantity, plusQuantity, minusQuantity}) => {
+const PlusMinusButton: React.FC<ButtonProps> = ({availableUnits, quantity, plusQuantity, minusQuantity}) => {
   return (
     <div className="flex group">
       <button 
         title="decrease"
-        disabled={!(quantity -1)} 
+        disabled={!(quantity -1) }
         type="button" 
         className="quantity_btn text-red-600 border-2 border-red-600 active:bg-red-600 dark:border-red-900 dark:text-red-800 dark:active:bg-red-800 active:text-cream-light border-r-black px-1 duration-300"
         onClick={() => minusQuantity()}><Minus/></button>

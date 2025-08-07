@@ -1,10 +1,12 @@
 import { heroModelImg, productImg1, productImg2, productImg3, productImg4 } from "@/assets/images"
+import AvailableUnitTag from "@/components/AvailableUnitTag"
 import PlusMinusButton from "@/components/PlusMinusButton"
 import ProductsSlider from "@/components/ProductsSlider"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/authContext"
-import { useCart, type CartType } from "@/context/cartContext"
-import useProductFetch, { type ProductType } from "@/controller/useProductFetch"
+import { useCart } from "@/context/cartContext"
+import useProductFetch from "@/controller/useProductFetch"
+import type { CartType, ProductType } from "@/types"
 import axios from "axios"
 import { Star } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -24,6 +26,7 @@ const ProductDetailsPage = () => {
         description: "",
         category: [],
         type: [],
+        units: 0,
         price: 0,});
 
     const [quantity, setQuantity] = useState<number>(1);
@@ -54,8 +57,13 @@ const ProductDetailsPage = () => {
             <div className="w-full md:col-span-10 lg:col-span-3 xl:col-span-4 place-self-center h-full">
 
                 {/* Product Image(s) */}
-                <div className="">
-                    <img src={heroModelImg} className="w-60 mx-auto" alt="" />
+                <div>
+                    <div className="relative">
+                        {product.units <= 0 && <div className="absolute w-5/6 h-full bg-gray-200/25 flex justify-self-center items-center justify-center"><h3 className="font-semibold text-4xl truncate text-red-600/90 origin-center">OUT OF STOCK</h3></div>}
+                        <AvailableUnitTag units={product.units}/>
+                        <img src={heroModelImg} className="w-60 mx-auto" alt="" />
+                    </div>
+                    {/* thumbnail from backend cloudinary */}
                     <div className="flex gap-2 md:gap-3 mt-4 h-20 w-4/5 md:w-3/5 lg:w-full mx-auto overflow-x-auto flex-nowrap">
                         <img src={productImg1} className="min-w-20" alt="" />
                         <img src={productImg1} className="min-w-20" alt="" />
@@ -133,7 +141,7 @@ const ProductDetailsPage = () => {
                 <div className="text-lg mb-4">
                     <div className="flex justify-between mb-3">
                         <p>Quantity: </p>
-                        <PlusMinusButton quantity={quantity} plusQuantity={increaseQantity} minusQuantity={decreaseQantity}/>
+                        <PlusMinusButton availableUnits={product.units} quantity={quantity} plusQuantity={increaseQantity} minusQuantity={decreaseQantity}/>
                     </div>
                     <div className="flex justify-between">
                         <p>Total: </p>
@@ -141,7 +149,7 @@ const ProductDetailsPage = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-y-4">
-                    <Button className="rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white">Buy Now</Button>
+                    <Button disabled={product.units <= 0} className="rounded-sm text-lg border-2 border-black h-12 dark:bg-black dark:text-white">Buy Now</Button>
                     <Button 
                     className="rounded-sm text-lg border-2 border-amber-500 h-12 font-bold bg-white dark:bg-stone-700 dark:text-white dark:border-white text-black hover:text-white"
                     onClick={ async() => {
