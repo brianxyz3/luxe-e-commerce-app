@@ -38,6 +38,7 @@ app.get("/products", async (req, res) => {
     category: { $in: [category] },
     type: { $in: [type] },
     price: { $gte: minPrice, $lte: maxPrice },
+    units: {$gte: 0},
   };
 
   const numOfPages = await Product.countDocuments(filterQuery).catch((err) =>
@@ -55,7 +56,6 @@ app.get("/products/:productId", async (req, res) => {
   console.log(productId);
     
   const product = await Product.findById(productId);
-
   res.json(product);
 });
 
