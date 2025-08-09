@@ -20,7 +20,7 @@ const ProductCard: React.FC<{product: ProductType; variant: "default" | "ghost"}
       <AvailableUnitTag units={product.units} />
 
       <Link to={`/products/${product._id}`} className="h-full">
-        <div className={`${product.units < 1 && "bg-gray-900/40 size-full" } absolute`}></div> {/* show out of stock products */}
+        {product.units < 1 && <div className="bg-gray-900/40 size-full absolute"></div>} {/* show out of stock products */}
         <img src={productImg1} alt="Product" className="rounded-t-2xl min-w-[135px] aspect-square" />
         <CardContent className="p-0 text-sm sm:text-base text-center flex flex-col justify-between">
           <h3 className="font-semibold truncate mx-1">{product.name}</h3>
@@ -39,7 +39,7 @@ const ProductCard: React.FC<{product: ProductType; variant: "default" | "ghost"}
                 units: 0  
               }
               const guestId = localStorage.getItem("guestId") || "null";
-              const {status, message} = await updateCart(currentUser.id || guestId, item);
+              const {status, message} = await updateCart(currentUser?.id || guestId, item);
               if(status === 200) return toast.success(message);
               return toast.error(message);
               // toast.error("An Error Occurred, Try Again");
