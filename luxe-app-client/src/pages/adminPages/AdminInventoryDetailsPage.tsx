@@ -32,7 +32,7 @@ const AdminInventoryDetailsPage = () => {
         if(inventory) {
             axios({
                 method: "DELETE",
-                headers: {"auth": `bearer- ${currentUser.token}`},
+                headers: {"auth": `bearer- ${currentUser?.token}`},
                 url: `/api/inventory/${inventory._id}/delete`,
             }).then(({data}) => {
                 toast.success(data.message);
@@ -132,7 +132,7 @@ const AdminInventoryDetailsPage = () => {
                 <div className="flex gap-2 md:gap-4">
                     <Input
                         type="number"
-                        value={stock}
+                        value={`${stock}`}
                         onChange={(evt) => setStock(parseInt(evt.target.value))}
                         className={`${showReStockInput ? "w-10 md:w-9 justify-center p-2" : "w-0 p-0"} origin-left transition-all duration-500 overflow-hidden`}
                     />
@@ -143,13 +143,13 @@ const AdminInventoryDetailsPage = () => {
                             if(stock >= 0) {
                                 axios({
                                     method: "PUT",
-                                    url: `/api/inventory/${inventory?.product._id}/reStockProduct`,
-                                    headers: {"auth": `Bearer- ${currentUser.token}`},
+                                    url: `/api/inventory/${inventory?.product._id}/reStockInventory`,
+                                    headers: {"auth": `Bearer- ${currentUser?.token}`},
                                     data: {units: stock}
                                 }).then(({data}) => {
                                     toast.success(data.message);
                                     setInventory(currValue => {
-                                        if(currValue) return {...currValue, units: stock}
+                                        if(currValue) return {...currValue, product: { ...inventory.product, units: stock}}
                                         return undefined
                                     })
                                     setShowReStockInput(false);
