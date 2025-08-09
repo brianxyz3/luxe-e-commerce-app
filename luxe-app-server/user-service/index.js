@@ -66,7 +66,7 @@ app.post(
         .catch((err) => console.log("Bcrypt error occurred: " + err));
 
         if (isPassword) {
-          const token = generateToken(email, user.userRole);
+          const token = generateToken(user._id, email, user.userRole);
           
           if (guestId && guestId != "null") {
             const updateCartResponse = await axios({
@@ -82,8 +82,6 @@ app.post(
 
           const data = {
             userDetail: {
-              email: user.email,
-              id: user._id,
               token,
             },
             cart: user.cart,
@@ -123,20 +121,20 @@ app.post(
         firstName,
         lastName,
         email,
-        userRole: "admin",
+        userRole: "customer",
         password: hashedPassword,
       });
 
-      const token = generateToken(email);
-
       const savedUser = await newUser.save().catch((err) => console.log(err));
 
-      console.log("saved");
+      const token = generateToken(
+        savedUser._id,
+        savedUser.email,
+        savedUser.userRole
+      );
 
       const data = {
         userDetail: {
-          email: savedUser.email,
-          id: savedUser._id,
           token,
         },
         message: "User Registered Successfully",
