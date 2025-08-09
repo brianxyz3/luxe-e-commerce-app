@@ -1,22 +1,7 @@
+import type { loginDataObj, RegisterDataObj, UserObj } from "@/types";
 import axios from "axios";
 
-interface UserObj {
-    email: string;
-    token: string;
-    id: string;
-}
 
-interface RegisterDataObj {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-}
-
-interface loginDataObj {
-    email: string;
-    password: string;
-}
 
 function setCookie(name: string , value: string, days: number) {
     const expires = new Date(Date.now() + days * 24 * 60 * 60 * 100).toUTCString();

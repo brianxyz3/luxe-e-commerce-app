@@ -1,18 +1,17 @@
+import type { CurrentUser } from "@/types";
 import React, { useContext, createContext, useEffect, useState, type ReactNode } from "react";
+import { jwtDecode } from "jwt-decode";
+
 
 interface AuthProviderType {
   children: ReactNode;
 }
 
 interface AuthContextType {
-  currentUser: {
-    email: string;
-    id?: string;
-    token: string;
-  };
+  currentUser: CurrentUser | undefined;
   userLoggedIn: boolean;
   isLoading: boolean;
-  handleUserState: (user: Record<string, string>) => void;
+  handleUserState: (user: CurrentUser) => void;
   handleLogInState: (state: boolean) => void;
 }
 
@@ -26,7 +25,7 @@ export const useAuth = () => {
 
 const AuthProvider: React.FC<AuthProviderType> = ({children}) => {
   const cookieObj: Record<string, string> = {};
-  const [currentUser, setCurrentUser] = useState({email: "", token: ""});
+  const [currentUser, setCurrentUser] = useState<CurrentUser | undefined>(undefined);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,11 +34,10 @@ const AuthProvider: React.FC<AuthProviderType> = ({children}) => {
     setUserLoggedIn(state);
   }
 
-  const handleUserState = (user: Record<string, string>) => {
-    setCurrentUser(currValue => (
-      {...currValue, ...user}
-    ));
+  const handleUserState = (user: CurrentUser) => {
+    setCurrentUser({...user});
   }
+
   
   useEffect(() => {
     updateUser();      
@@ -47,11 +45,12 @@ const AuthProvider: React.FC<AuthProviderType> = ({children}) => {
 
   const updateUser = () => {
     parseCookie(document.cookie);
-    const {email, id, token} = cookieObj;
+    const {token} = cookieObj;
     try{
       if(token) {
+        const decodedToken: CurrentUser = jwtDecode(token);
         setCurrentUser((prevUser) => (
-          {...prevUser, email, id, token}
+          {...prevUser, email: decodedToken.email, id: decodedToken.id, userRole: decodedToken.userRole, token}
         ));
         setUserLoggedIn(true);
       }
