@@ -50,7 +50,7 @@ const AdminInventoryPage = () => {
     try {
       axios({
         method: "DELETE",
-        headers: {"auth": `bearer- ${currentUser.token}`},
+        headers: {"auth": `bearer- ${currentUser?.token}`},
         url: `/api/inventory/${inventoryId}/delete`,
       }).then(({data}) => {
         toast.success(data.message);
@@ -78,7 +78,7 @@ const AdminInventoryPage = () => {
           })
           setIsDescUnitSort(currValue => !currValue)
         }}
-        className="flex gap-1 py-0.5 px-1.5 text-sm font-semibold h-fit rounded-full bg-amber-600">Sort by units {isDescUnitSort ? <ArrowUp10 className="size-5"/> : <ArrowDown01 className="size-5"/> }</button>
+        className="flex gap-1 py-1 px-3 text-xs items-center font-semibold h-fit rounded-full bg-amber-600">Sort by units {isDescUnitSort ? <ArrowUp10 className="size-4"/> : <ArrowDown01 className="size-4"/> }</button>
       </div>
 
       <div className="mb-4 items-center">
@@ -96,7 +96,7 @@ const AdminInventoryPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-fit mx-auto gap-4">
         {filteredInventory ?
           filteredInventory.map((inventoryItem) => (
-          <div key={inventoryItem.product._id} className="bg-cream-lighter dark:bg-black p-4 rounded shadow relative">
+          <div key={inventoryItem.product._id} className="bg-cream-lighter dark:bg-amber-900/15 p-4 rounded shadow relative">
             <Link to={`/admin/inventory/${inventoryItem._id}`}>
               <img
                 src={productImg1}

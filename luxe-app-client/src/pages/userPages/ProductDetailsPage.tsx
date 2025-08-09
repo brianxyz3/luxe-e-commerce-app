@@ -47,7 +47,7 @@ const ProductDetailsPage = () => {
 
     const isUnitDifferent = cart.some((item) => item.productId === productId && item.units !== quantity)
     
-    const increaseQantity = () => setQuantity(prevVal => prevVal + 1)
+    const increaseQantity = () => setQuantity(prevVal => Math.min(prevVal + 1, product.units))
     const decreaseQantity = () => setQuantity(prevVal => prevVal - 1)
 
   return (
@@ -59,7 +59,7 @@ const ProductDetailsPage = () => {
                 {/* Product Image(s) */}
                 <div>
                     <div className="relative">
-                        {product.units <= 0 && <div className="absolute w-5/6 h-full bg-gray-200/25 flex justify-self-center items-center justify-center"><h3 className="font-semibold text-4xl truncate text-red-600/90 origin-center">OUT OF STOCK</h3></div>}
+                        {product.units <= 0 && <div className="absolute w-5/6 h-full bg-gray-200/25 flex justify-self-center items-center justify-center"><h3 className="font-semibold text-4xl truncate text-black origin-center">OUT OF STOCK</h3></div>}
                         <AvailableUnitTag units={product.units}/>
                         <img src={heroModelImg} className="w-60 mx-auto" alt="" />
                     </div>
@@ -162,7 +162,7 @@ const ProductDetailsPage = () => {
                     }
                     const guestId = localStorage.getItem("guestId") || "null";
 
-                    const {status, message} = await updateCart(currentUser.id || guestId, item);
+                    const {status, message} = await updateCart(currentUser?.id || guestId, item);
                     if(status === 200) return toast.success(message);
                     return toast.error(message);
                 }

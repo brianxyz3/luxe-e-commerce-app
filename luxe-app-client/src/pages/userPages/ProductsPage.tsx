@@ -5,6 +5,7 @@ import useProductFetch from "@/controller/useProductFetch";
 import ProductCard from "@/components/ProductCard";
 import { useLocation, useNavigate } from "react-router";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 
@@ -33,6 +34,7 @@ const ProductsPage = () => {
   }, [search])
 
   const {productList, totalNumOfPages} = useProductFetch( pageNumber.current, searchInput, searchQueries);
+  const pagesArr = new Array(totalNumOfPages)
 
   const categories = [
     "all",
@@ -156,7 +158,22 @@ const ProductsPage = () => {
               navigate(`/products?page=${pageNumber.current}`)
             }}
             className="font-bold text-black dark:text-white dark:bg-cream-darker bg-cream-light">Prev</Button>
-            <p className="text-xl font-black">{pageNumber.current}</p>
+            <Select name="page" value={`${pageNumber.current}`} onValueChange={(value) => {
+              pageNumber.current= parseInt(value)
+              navigate(`/products?page=${pageNumber.current}`)
+            }}>
+              <SelectTrigger className="text-xl font-bold">
+                <SelectValue placeholder="1" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                <SelectLabel>Product Page</SelectLabel>
+                {[...pagesArr].map((page, index) => (
+                    <SelectItem className="text-lg" key={index} value={`${index + 1}`}>{index + 1}</SelectItem>
+                ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <Button
             disabled={pageNumber.current === totalNumOfPages}
             onClick={() => {
