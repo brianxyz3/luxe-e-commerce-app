@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Boxes, LogInIcon, LogOut, MoonStar, Plus, Search, ShoppingCart, Sun, User, UserCheck } from "lucide-react";
+import { Boxes, LayoutDashboard, LogInIcon, LogOut, MoonStar, Plus, Search, ShoppingCart, Sun, User, UserCheck } from "lucide-react";
 import { heroModelImg } from "@/assets/images";
 import { Link, NavLink } from "react-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -12,6 +12,7 @@ import { useCart } from "@/context/cartContext";
 // import { toast } from "react-toastify";
 import { Button } from "./ui/button";
 import type { ProductType } from "@/types";
+import useProductFetch from "@/controller/useProductFetch";
 
 gsap.registerPlugin(useGSAP);
 
@@ -22,7 +23,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
   const [searchResult, setSearchResult] = useState<ProductType[] | undefined>([]);
   const {theme, toggleTheme} = useTheme();
   const navBtn = useRef(null);
-  const {userLoggedIn, handleLogInState} = useAuth();
+  const {userLoggedIn, currentUser} = useAuth();
   const {cart} = useCart();
 
   const navBtnTL = gsap.timeline({
@@ -83,7 +84,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
 
   return (
     <header className="dark:bg-black">
-      <section className="fixed backdrop-blur-md bg-white/15 dark:bg-amber-900/15  w-full md:sticky z-50 top-0 shadow-sm p-4 flex items-center justify-between">
+      <section className="fixed backdrop-blur-md bg-white/15 dark:bg-amber-600/15  w-full md:sticky z-50 top-0 shadow-sm p-4 flex items-center justify-between">
         <div ref={navBtn} className="md:hidden">
           <button title="navigation icon" type="button" className={`navBtn ease-linear overflow-hidden flex p-[3px] size-8 justify-center items-center md:hidden border border-transparent rounded-md hover:border-gray-700 `}
             onClick={toggleNavBar}>
@@ -136,6 +137,7 @@ const HeaderNav: React.FC<{isHome?: boolean}>  = ({isHome = false}) => {
           </Link>
           <Link className={`${userLoggedIn && "hidden"}`} to="/auth"><LogInIcon className="size-5 md:size-7 aspect-square" /></Link>
           <Link className={`${!userLoggedIn && "hidden"}`} to="/dashboard"><UserCheck className="size-5 md:size-7 aspect-square" /></Link>
+          {currentUser?.userRole === "admin" && <Link to="/admin/dashboard"><LayoutDashboard className="size-5 md:size-7 aspect-square"/></Link>}
           {/* <button title="Log out" type="button" className={`${!userLoggedIn && "hidden"}`} 
           onClick={async () => {
             const {message, status} = await signOut();

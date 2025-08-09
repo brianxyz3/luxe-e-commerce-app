@@ -11,6 +11,7 @@ import AdminInventoryPage from "./pages/adminPages/AdminInventoryPage"
 import AdminInventoryDetailsPage from "./pages/adminPages/AdminInventoryDetailsPage"
 import AdminEditInventoryPage from "./pages/adminPages/AdminEditInventoryPage"
 import AdminOrderHistoryPage from "./pages/adminPages/AdminOrderHistoryPage"
+import AdminAddInventoryPage from "./pages/adminPages/AdminAddInventoryPage"
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route element={<AdminLayout/>}>
               <Route path="/admin/dashboard" element={<AdminDashboardPage/>}/>
               <Route path="/admin/inventory" element={<AdminInventoryPage/>}/>
+              <Route path="/admin/inventory/add" element={<AdminAddInventoryPage/>}/>
               <Route path="/admin/inventory/:inventoryId" element={<AdminInventoryDetailsPage/>}/>
               <Route path="/admin/inventory/:inventoryId/edit" element={<AdminEditInventoryPage/>}/>
               <Route path="/admin/orders" element={<AdminOrderHistoryPage/>}/>

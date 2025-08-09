@@ -120,7 +120,7 @@ const AdminEditInventoryPage = () => {
         <section className="bg-cream-lighter dark:bg-stone-700 w-full">
             <div className="container m-auto max-w-xl py-24">
                 <div
-                    className="bg-cream-light dark:bg-black px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0"
+                    className="bg-cream-light dark:bg-amber-900/15 px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0"
                 >
                     {formData ? 
                         <form onSubmit={submitEditForm}>

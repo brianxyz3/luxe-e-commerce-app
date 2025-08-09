@@ -1,3 +1,19 @@
+export interface UserObj {
+  token: string;
+}
+
+export interface RegisterDataObj {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface loginDataObj {
+  email: string;
+  password: string;
+}
+
 export interface InventoryDataType {
   _id: string;
   product: ProductType;
@@ -5,23 +21,23 @@ export interface InventoryDataType {
 }
 
 export interface ProductType {
-    _id: string;
-    name: string;
-    category: string[];
-    brandName: string;
-    description: string;
-    type: string[];
-    price: number;
-    units: number;
+  _id: string;
+  name: string;
+  category: string[];
+  brandName: string;
+  description: string;
+  type: string[];
+  price: number;
+  units: number;
 }
 
 
 export interface CartType {
-    productId: string;
-    productName: string;
-    productBrandName: string;
-    price: number;
-    units: number;
+  productId: string;
+  productName: string;
+  productBrandName: string;
+  price: number;
+  units: number;
 }
 
 interface InventoryType {
@@ -53,6 +69,13 @@ interface UserType {
   deliveryAddress: string;
   userRole: string;
 }
+
+export interface CurrentUser {
+  email: string;
+  id: string;
+  userRole: string;
+  token: string;
+};
 
 export interface DashboardContextType {
   inventory: InventoryType;
