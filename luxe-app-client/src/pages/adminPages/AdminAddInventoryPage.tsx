@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import axios from "axios";
-import type { InventoryDataType } from "@/types";
 
 
 const productCategories = [
@@ -103,7 +102,7 @@ const AdminAddInventoryPage = () => {
             axios({
                 method: "POST",
                 url: `/api/inventory/add`,
-                headers: {"auth": `Bearer- ${currentUser.token}`},
+                headers: {"auth": `Bearer- ${currentUser?.token}`},
                 data: formData
             }).then(({data}) => {
                 toast.success(data.message);
@@ -192,7 +191,7 @@ const AdminAddInventoryPage = () => {
                         <label htmlFor="units"
                             className="text-gray-600 tracking-wider font-bold"
                         >Units:</label>
-                        <Input value={formData.product.units} id="units" name="units" type="number" onChange={handleInventoryChange} className="shadow-md w-[60px] max-w-fit bg-cream-lighter"/>
+                        <Input value={formData.product.units} id="units" name="units" type="number" onChange={handleProductChange} className="shadow-md w-[60px] max-w-fit bg-cream-lighter"/>
                         {/* {errors.contact && <span style={errorStyle}>{validateForm.email.required}</span>} */}
                     </div>
                     <div className="mb-4">

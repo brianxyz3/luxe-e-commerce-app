@@ -101,7 +101,7 @@ const AdminEditInventoryPage = () => {
             axios({
                 method: "PUT",
                 url: `/api/inventory/${inventoryId}/edit`,
-                headers: {"auth": `Bearer- ${currentUser.token}`},
+                headers: {"authorization": `Bearer- ${currentUser?.token}`},
                 data: formData
             }).then(({data}) => {
                 toast.success(data.message);
@@ -191,7 +191,7 @@ const AdminEditInventoryPage = () => {
                             <label htmlFor="units"
                                 className="text-gray-600 tracking-wider font-bold"
                             >Units:</label>
-                            <Input value={formData.product.units} id="units" name="units" type="number" onChange={handleInventoryChange} className="shadow-md w-[60px] max-w-fit bg-cream-lighter"/>
+                            <Input value={formData.product.units} id="units" name="units" type="number" onChange={handleProductChange} className="shadow-md w-[60px] max-w-fit bg-cream-lighter"/>
                             {/* {errors.contact && <span style={errorStyle}>{validateForm.email.required}</span>} */}
                         </div>
                         <div className="mb-4">
